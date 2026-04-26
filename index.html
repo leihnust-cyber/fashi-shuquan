@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>法式数诠：〈营造法式〉中的数字化营建逻辑</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.157.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.157.0/examples/jsm/"
+            }
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js">
+    </script>
+    <style>
+        :root {
+            --bg: #f5f0e8;
+            --text: #3a3226;
+            --accent: #b23a2a;
+            --gold: #8b6914;
+            --card: #faf7f2;
+            --border: #d4c5a9;
+            --shadow: 0 2px 20px rgba(0, 0, 0, 0.06);
+            --serif: 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', 'SimSun', 'STSong', serif;
+            --sans: 'Noto Sans SC', 'Source Han Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            --transition: 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--sans);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            overflow-x: hidden;
+            background-attachment: fixed;
+            position: relative;
+            background-image:
+                radial-gradient(ellipse at 20% 50%, rgba(139, 105, 20, 0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(178, 58, 42, 0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(139, 105, 20, 0.02) 0%, transparent 50%);
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.04;
+            background: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(139, 105, 20, 0.1) 2px,
+                    rgba(139, 105, 20, 0.1) 4px);
+        }
+
+        .page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px;
+            position: relative;
+            scroll-snap-align: start;
+        }
+
+        .page-inner {
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* 第3页特殊布局：左右分栏 */
+        .page-split {
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
+            justify-content: center;
+            gap: 30px;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 80px 20px;
+            min-height: 100vh;
+        }
+
+        .page-split .split-left {
+            flex: 0 0 380px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow-y: auto;
+            max-height: 100vh;
+            padding-right: 10px;
+        }
+
+        .page-split .split-right {
+            flex: 1;
+            min-height: 600px;
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            background: #1a1815;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .split-right #three-canvas {
+            flex: 1;
+            width: 100%;
+            cursor: grab;
+        }
+
+        .split-right #three-canvas:active {
+            cursor: grabbing;
+        }
+
+        .split-right .model-toolbar {
+            display: flex;
+            gap: 8px;
+            padding: 10px 14px;
+            background: rgba(26, 24, 21, 0.95);
+            border-top: 1px solid rgba(212, 197, 169, 0.15);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .split-right .model-toolbar .tool-btn {
+            padding: 6px 14px;
+            border: 1px solid rgba(212, 197, 169, 0.3);
+            border-radius: 4px;
+            background: transparent;
+            color: #d4c5a9;
+            font-family: var(--serif);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+        }
+
+        .split-right .model-toolbar .tool-btn:hover {
+            background: rgba(178, 58, 42, 0.2);
+            border-color: var(--accent);
+            color: #e8c45a;
+        }
+
+        .split-right .model-toolbar .tool-btn.active {
+            background: rgba(178, 58, 42, 0.3);
+            border-color: var(--accent);
+            color: #e8c45a;
+        }
+
+        .split-right .model-hint {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(212, 197, 169, 0.5);
+            font-family: var(--serif);
+            font-size: 0.75rem;
+            pointer-events: none;
+            z-index: 10;
+            transition: opacity 1s ease;
+        }
+
+        .page-number {
+            font-family: var(--serif);
+            font-size: 0.85rem;
+            color: var(--accent);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            opacity: 0.7;
+        }
+
+        .page-title {
+            font-family: var(--serif);
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: #2a2218;
+            margin-bottom: 16px;
+            letter-spacing: 0.04em;
+            line-height: 1.3;
+        }
+
+        .page-subtitle {
+            font-family: var(--serif);
+            font-size: 1.15rem;
+            color: #6b5e4a;
+            margin-bottom: 40px;
+            letter-spacing: 0.06em;
+            font-weight: 400;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 32px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            width: 100%;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            border: 1.5px solid var(--border);
+            border-radius: 6px;
+            background: var(--card);
+            color: var(--text);
+            font-family: var(--serif);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            letter-spacing: 0.04em;
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            background: #3a3226;
+            color: #f5f0e8;
+            border-color: #3a3226;
+        }
+
+        .btn.active {
+            background: #3a3226;
+            color: #f5f0e8;
+            border-color: #3a3226;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-sm {
+            padding: 8px 18px;
+            font-size: 0.9rem;
+            letter-spacing: 0.03em;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .svg-container {
+            width: 100%;
+            max-width: 500px;
+            margin: 30px auto;
+            display: flex;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        svg {
+            transition: var(--transition);
+            overflow: visible;
+        }
+
+        svg .building-part {
+            transition: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+            cursor: pointer;
+        }
+
+        svg .building-part:hover {
+            filter: brightness(1.2);
+        }
+
+        svg .highlight {
+            stroke: var(--accent) !important;
+            stroke-width: 2.5 !important;
+            filter: drop-shadow(0 0 6px rgba(178, 58, 42, 0.5));
+        }
+
+        svg .dimmed {
+            opacity: 0.2;
+            transition: opacity 0.5s ease;
+        }
+
+        .info-panel {
+            background: rgba(58, 50, 38, 0.95);
+            color: #f5f0e8;
+            padding: 20px 28px;
+            border-radius: 8px;
+            margin: 20px 0;
+            min-height: 60px;
+            transition: var(--transition);
+            font-family: var(--serif);
+            letter-spacing: 0.03em;
+            line-height: 1.7;
+            backdrop-filter: blur(10px);
+        }
+
+        .info-panel .highlight-text {
+            color: #e8c45a;
+            font-weight: 600;
+        }
+
+        .chart-container {
+            width: 100%;
+            max-width: 800px;
+            height: 400px;
+            margin: 30px auto;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.8s ease forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+        }
+
+        .fade-in-delay-1 {
+            animation-delay: 0.2s;
+        }
+
+        .fade-in-delay-2 {
+            animation-delay: 0.4s;
+        }
+
+        .fade-in-delay-3 {
+            animation-delay: 0.6s;
+        }
+
+        .nav-dots {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .nav-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .nav-dot.active {
+            background: var(--accent);
+            box-shadow: 0 0 8px rgba(178, 58, 42, 0.5);
+            transform: scale(1.3);
+        }
+        /*
+        .ink-reveal {
+            position: relative;
+            display: inline-block;
+            clip-path: inset(0 100% 0 0);
+            transition: clip-path 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .ink-reveal.ink-visible {
+            clip-path: inset(0 0 0 0);
+        }
+         */
+         .ink-reveal {
+    position: relative;
+    display: inline-block;
+    /* 初始可见，动画只在 observer 触发时播放 */
+    clip-path: inset(0 0 0 0);
+}
+
+/* 仅在 JS 初始化后才设置动画初始状态 */
+.ink-reveal.ink-ready {
+    clip-path: inset(0 100% 0 0);
+    transition: clip-path 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ink-reveal.ink-visible {
+    clip-path: inset(0 0 0 0);
+}
+
+        .ink-quote {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ink-quote::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #8b6914, transparent);
+            animation: inkSweep 3s ease-in-out infinite;
+        }
+
+        @keyframes inkSweep {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            50% {
+                transform: translateX(100%);
+            }
+
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        .divider {
+            width: 60px;
+            height: 3px;
+            background: var(--accent);
+            margin: 20px auto;
+            opacity: 0.5;
+            border-radius: 2px;
+        }
+
+        .card-highlight {
+            border-left: 4px solid var(--accent);
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(178, 58, 42, 0.08);
+            color: var(--accent);
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-family: var(--serif);
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 1024px) {
+            .page-split {
+                flex-direction: column;
+                padding: 40px 16px;
+                gap: 20px;
+            }
+
+            .page-split .split-left {
+                flex: 0 0 auto;
+                max-height: none;
+                overflow-y: visible;
+                padding-right: 0;
+            }
+
+            .page-split .split-right {
+                min-height: 450px;
+                flex: 0 0 450px;
+            }
+
+            .page-title {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 1.8rem;
+            }
+
+            .page-subtitle {
+                font-size: 1rem;
+            }
+
+            .page {
+                padding: 60px 16px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .nav-dots {
+                right: 8px;
+                gap: 8px;
+            }
+
+            .nav-dot {
+                width: 8px;
+                height: 8px;
+            }
+
+            .chart-container {
+                height: 280px;
+            }
+
+            .page-split .split-right {
+                min-height: 350px;
+                flex: 0 0 350px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 古书质感叠加层 -->
+    <div id="parchmentOverlay" style="
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.08;
+    background-image: 
+        radial-gradient(ellipse at 20% 80%, #8b6914 0%, transparent 40%),
+        radial-gradient(ellipse at 80% 20%, #5a3a1a 0%, transparent 40%),
+        url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22><filter id=%22noise%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/></svg>');
+    background-size: cover, cover, 200px;
+    mix-blend-mode: multiply;
+"></div>
+
+    <!-- 导航指示器 -->
+    <div class="nav-dots" id="navDots">
+        <div class="nav-dot active" data-page="0"></div>
+        <div class="nav-dot" data-page="1"></div>
+        <div class="nav-dot" data-page="2"></div>
+        <div class="nav-dot" data-page="3"></div>
+        <div class="nav-dot" data-page="4"></div>
+    </div>
+
+    <!-- ============ 第一页：缘起 ============ -->
+    <section class="page" id="page1">
+        <div class="page-inner fade-in">
+            <div class="page-number">第一章</div>
+            <h1 class="page-title">缘起：一部建筑"代码"的诞生</h1>
+            <p class="page-subtitle">北宋崇宁二年，李诫奉旨修书，将千年的营造智慧凝练为一套标准化的建筑法典</p>
+
+            <div class="card fade-in-delay-1">
+                <p style="font-family: var(--serif); font-size: 1.1rem; line-height: 2;">
+                    北宋崇宁二年（公元<strong>1103年</strong>），将作监丞<strong>李诫</strong>（1035-1110）奉敕编修的《营造法式》正式颁布。
+                    这是一部集大成的建筑技术专著，被<strong style="color: var(--accent);">梁思成先生</strong>誉为：
+                </p>
+                <blockquote class="ink-quote" style="border-left: 3px solid var(--accent); padding-left: 20px; margin: 20px 0; color: #6b5e4a; font-style: italic; font-family: var(--serif);">
+                    <span class="ink-reveal">"中国古籍中最完善的一部建筑技术专著，</span>
+                    <span class="ink-reveal" style="transition-delay: 0.5s;">也是研究中国古代建筑最重要的一部参考书。"</span>
+                </blockquote>
+                <p style="font-family: var(--serif); line-height: 2;">
+                    在此之前，天下工匠各凭经验，工程质量参差不齐。李诫以<strong>"有定法而无定式"</strong>的理念，
+                    将建筑的万千变化归于一套精密的模数系统——<strong style="color: var(--gold);">材份制</strong>。
+                    如同今日的计算机程序，输入材等参数，千种构件便自动生成。
+                </p>
+            </div>
+
+            <div class="card card-highlight fade-in-delay-2">
+                <h3 style="font-family: var(--serif); color: var(--accent); margin-bottom: 12px; font-size: 1.3rem;">📜 熙宁变法的工程遗产</h3>
+                <p style="font-family: var(--serif); line-height: 2;">
+                    北宋熙宁年间（1069-1085），王安石推行变法，其中一项重要举措就是规范全国的工程营造标准，
+                    以控制成本、防止腐败、保证质量。变法虽因政治斗争最终失败，
+                    但对<strong>工程标准化</strong>的需求却深深烙印在朝廷的治理逻辑中。
+                </p>
+                <p style="font-family: var(--serif); line-height: 2;">
+                    崇宁二年（1103年），<strong>将作监丞李诫</strong>——这位相当于今日住建部总工程师的实干家——
+                    在总结前人典籍与自身十余年督造实践的基础上，奉敕编纂完成了这部空前绝后的建筑技术法典。
+                    它不仅是宋代官方颁布的<strong>唯一一部完整的建筑规范</strong>，
+                    更比欧洲同类技术标准早了数百年。
+                </p>
+                <div style="margin-top: 16px;">
+                    <span class="tag">王安石变法</span>
+                    <span class="tag">工程标准化</span>
+                    <span class="tag">官方颁布</span>
+                    <span class="tag">世界最早</span>
+                </div>
+            </div>
+
+            <div class="card fade-in-delay-3">
+                <p style="text-align: center; font-family: var(--serif); font-size: 1.3rem; color: var(--accent); letter-spacing: 0.1em;">
+                    —— 在大宋，盖房子不需要画笔<br>
+                    只需要一个"材"的数值<br>
+                    整座宫殿便在算法中自动生成 ——
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ 第二页：材份制 ============ -->
+    <section class="page" id="page2">
+        <div class="page-inner fade-in">
+            <div class="page-number">第二章</div>
+            <h2 class="page-title">以"材"为祖：古人的参数化设计</h2>
+            <p class="page-subtitle">八个等级，一套模数。选择材等，建筑的万千构件便有了尺度。</p>
+
+            <div class="card card-highlight fade-in-delay-1">
+                <h3 style="font-family: var(--serif); color: var(--accent); margin-bottom: 12px; font-size: 1.2rem;">🧱 什么是材份制？——古代的乐高系统</h3>
+                <p style="font-family: var(--serif); line-height: 2;">
+                    材份制的核心逻辑极为简洁：把建筑所有构件的尺寸，都变成<strong>"材"的倍数或分数</strong>。
+                </p>
+                <p style="font-family: var(--serif); line-height: 2;">
+                    比如，柱子的标准直径是<strong>材高的2倍</strong>，斗拱每一跳出挑的长度是<strong>材高的3倍</strong>。
+                    这意味着，只要确定了"材"的等级，<strong>整座建筑的比例就自动锁定了</strong>——
+                    就像今天的乐高积木，不需要重新设计每一块砖，只需要选择对应的模块。
+                </p>
+                <span class="tag">参数化设计</span>
+                <span class="tag">模数系统</span>
+                <span class="tag">以材为祖</span>
+            </div>
+
+            <div class="btn-group fade-in-delay-2" id="materialBtns"></div>
+
+            <div class="svg-container fade-in-delay-2" id="svgBuilding">
+                <svg width="400" height="450" viewBox="0 0 400 450" xmlns="http://www.w3.org/2000/svg" id="buildingSvg">
+                    <rect id="platform" x="80" y="370" width="240" height="30" fill="#e8dcc8" stroke="#8b7355" stroke-width="2" rx="2" />
+                    <rect id="col1" x="110" y="220" width="18" height="150" fill="#c4956a" stroke="#8b6914" stroke-width="1.5" class="building-part" data-name="檐柱（左）" />
+                    <rect id="col2" x="191" y="220" width="18" height="150" fill="#c4956a" stroke="#8b6914" stroke-width="1.5" class="building-part" data-name="檐柱（中）" />
+                    <rect id="col3" x="272" y="220" width="18" height="150" fill="#c4956a" stroke="#8b6914" stroke-width="1.5" class="building-part" data-name="檐柱（右）" />
+                    <rect id="beam" x="105" y="210" width="190" height="14" fill="#a0522d" stroke="#8b6914" stroke-width="1.5" class="building-part" data-name="阑额" />
+                    <rect id="dougongBase" x="100" y="160" width="200" height="50" fill="#d4a574" stroke="#8b6914" stroke-width="1.5" class="building-part" data-name="斗拱层" />
+                    <rect id="ludou1" x="108" y="170" width="20" height="16" fill="#e8c45a" stroke="#8b6914" stroke-width="1.2" class="building-part dougong-part" data-name="栌斗（左）" />
+                    <rect id="ludou2" x="140" y="170" width="20" height="16" fill="#e8c45a" stroke="#8b6914" stroke-width="1.2" class="building-part dougong-part" data-name="栌斗（中左）" />
+                    <rect id="ludou3" x="190" y="170" width="20" height="16" fill="#e8c45a" stroke="#8b6914" stroke-width="1.2" class="building-part dougong-part" data-name="栌斗（正中）" />
+                    <rect id="ludou4" x="240" y="170" width="20" height="16" fill="#e8c45a" stroke="#8b6914" stroke-width="1.2" class="building-part dougong-part" data-name="栌斗（中右）" />
+                    <rect id="ludou5" x="272" y="170" width="20" height="16" fill="#e8c45a" stroke="#8b6914" stroke-width="1.2" class="building-part dougong-part" data-name="栌斗（右）" />
+                    <polygon id="roof" points="60,160 200,80 340,160" fill="#4a6741" stroke="#2a3a1a" stroke-width="2" class="building-part" data-name="屋顶" />
+                    <circle id="finial" cx="200" cy="78" r="5" fill="#e8c45a" stroke="#8b6914" stroke-width="1" />
+                    <text x="200" y="420" text-anchor="middle" fill="#8b7355" font-size="12" font-family="var(--serif)" id="scaleLabel">一等材 · 大殿规格</text>
+                </svg>
+            </div>
+
+            <div class="info-panel fade-in-delay-3" id="materialInfo">
+                <p>👆 选择材等，观察建筑比例变化</p>
+                <p style="font-size: 0.9rem; opacity: 0.7;">一等材（高9寸/宽6寸）—— 用于最高等级的九至十一间大殿</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ 第三页：斗拱拆解（含3D模型） ============ -->
+    <section class="page" id="page3" style="padding: 0;">
+        <div class="page-split">
+            <!-- 左侧：文字内容 -->
+            <div class="split-left fade-in">
+                <div class="page-number">第三章</div>
+                <h2 class="page-title" style="font-size: 2rem;">构件：斗拱的拼装密码</h2>
+                <p class="page-subtitle" style="margin-bottom: 20px;">六层构件，精密咬合。<br>左侧读其理，右侧观其形。</p>
+
+                <div class="card card-highlight" style="padding: 20px; margin-bottom: 16px;">
+                    <h3 style="font-family: var(--serif); color: var(--accent); margin-bottom: 8px; font-size: 1.1rem;">🏗️ 斗拱不是装饰，是精密的受力结构</h3>
+                    <p style="font-family: var(--serif); line-height: 1.9; font-size: 0.95rem;">
+                        许多人以为斗拱只是古代建筑的装饰品。<strong>其实，它是中国古代木构建筑最核心的受力构件。</strong>
+                        斗拱的任务是把沉重屋顶的重量，通过层层出挑的栱和斜向的昂，巧妙地传递到柱子上。
+                    </p>
+                    <p style="font-family: var(--serif); line-height: 1.9; font-size: 0.95rem;">
+                        <strong>昂的杠杆原理</strong>是斗拱最精妙的设计：屋顶的重量压在昂的尾部，
+                        昂身绕着下方的横栱旋转，将力传递到内柱。这种"四两拨千斤"的智慧，
+                        让出挑很远的屋檐<strong>不需要额外的支撑柱</strong>。
+                    </p>
+                    <span class="tag">受力构件</span>
+                    <span class="tag">杠杆原理</span>
+                    <span class="tag">抗震智慧</span>
+                </div>
+
+                <!-- SVG斗拱拆解按钮 -->
+                <div class="btn-group" id="dougongBtns" style="gap: 6px; margin: 12px 0;">
+                    <button class="btn btn-sm dougong-btn active" data-action="reset">🔍 完整</button>
+                    <button class="btn btn-sm dougong-btn" data-action="highlight-ludou">栌斗</button>
+                    <button class="btn btn-sm dougong-btn" data-action="highlight-huagong">华栱</button>
+                    <button class="btn btn-sm dougong-btn" data-action="highlight-nidao">泥道栱</button>
+                    <button class="btn btn-sm dougong-btn" data-action="highlight-ang">昂</button>
+                    <button class="btn btn-sm dougong-btn" data-action="highlight-shuatou">耍头</button>
+                    <button class="btn btn-sm dougong-btn" data-action="explode">💥 拆解</button>
+                </div>
+
+                <!-- SVG斗拱图 -->
+                <div class="svg-container" id="svgDougong" style="max-width: 320px; margin: 10px auto;">
+                    <svg width="320" height="320" viewBox="0 0 380 380" xmlns="http://www.w3.org/2000/svg" id="dougongSvg">
+                        <g id="g-ludou" class="dg-group" data-group="ludou">
+                            <rect x="150" y="280" width="80" height="40" rx="3" fill="#e8c45a" stroke="#8b6914" stroke-width="1.8" />
+                            <text x="190" y="305" text-anchor="middle" fill="#3a3226" font-size="11" font-family="var(--serif)">栌斗</text>
+                        </g>
+                        <g id="g-nidao" class="dg-group" data-group="nidao">
+                            <rect x="90" y="255" width="200" height="30" rx="2" fill="#d4a574" stroke="#8b6914" stroke-width="1.5" />
+                            <text x="190" y="274" text-anchor="middle" fill="#3a3226" font-size="10" font-family="var(--serif)">泥道栱</text>
+                        </g>
+                        <g id="g-huagong" class="dg-group" data-group="huagong">
+                            <rect x="140" y="225" width="100" height="35" rx="2" fill="#c4956a" stroke="#8b6914" stroke-width="1.5" />
+                            <text x="190" y="247" text-anchor="middle" fill="#3a3226" font-size="10" font-family="var(--serif)">华栱</text>
+                        </g>
+                        <g id="g-ang" class="dg-group" data-group="ang">
+                            <polygon points="130,195 250,195 230,180 150,180" fill="#a0522d" stroke="#8b6914" stroke-width="1.5" />
+                            <text x="190" y="210" text-anchor="middle" fill="#f5f0e8" font-size="10" font-family="var(--serif)">昂</text>
+                        </g>
+                        <g id="g-shuatou" class="dg-group" data-group="shuatou">
+                            <rect x="155" y="160" width="70" height="25" rx="2" fill="#e8c45a" stroke="#8b6914" stroke-width="1.3" />
+                            <text x="190" y="177" text-anchor="middle" fill="#3a3226" font-size="9" font-family="var(--serif)">耍头</text>
+                        </g>
+                        <g id="g-chenfang" class="dg-group" data-group="chenfang">
+                            <rect x="160" y="135" width="60" height="28" rx="2" fill="#d4a574" stroke="#8b6914" stroke-width="1.2" />
+                            <text x="190" y="153" text-anchor="middle" fill="#3a3226" font-size="9" font-family="var(--serif)">衬方头</text>
+                        </g>
+                        <line x1="190" y1="280" x2="190" y2="163" stroke="#d4c5a9" stroke-width="0.8" stroke-dasharray="4,4" opacity="0.5" />
+                    </svg>
+                </div>
+
+                <div class="info-panel" id="dougongInfo" style="padding: 14px 18px; font-size: 0.9rem;">
+                    <p>👆 选择一个构件或点击"拆解视图"</p>
+                    <p style="font-size:0.8rem;opacity:0.7;">华栱出跳长度通常为30分（即材高的两倍）</p>
+                </div>
+            </div>
+
+            <!-- 右侧：3D模型查看器 -->
+            <div class="split-right fade-in-delay-1">
+                <div id="three-canvas"></div>
+                <div class="model-hint" id="model-hint">🖱️ 拖拽旋转 · 滚轮缩放 · 右键平移</div>
+                <div class="model-toolbar">
+                    <button class="tool-btn active" data-view="all">全景</button>
+                    <button class="tool-btn" data-view="top">俯瞰</button>
+                    <button class="tool-btn" data-view="bottom">仰观</button>
+                    <button class="tool-btn" data-view="front">正视</button>
+                    <button class="tool-btn" data-view="side">侧视</button>
+                    <button class="tool-btn" data-view="auto" id="btn-auto-rotate">自动旋转：开</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ 第四页：影响 ============ -->
+    <section class="page" id="page4">
+        <div class="page-inner fade-in">
+            <div class="page-number">第四章</div>
+            <h2 class="page-title">影响：从汴京到紫禁城</h2>
+            <p class="page-subtitle">《营造法式》的模数思想，影响了中国建筑八百年</p>
+
+            <div class="card card-highlight fade-in-delay-1">
+                <h3 style="font-family: var(--serif); color: var(--accent); margin-bottom: 12px; font-size: 1.2rem;">🔍 梁思成与佛光寺：一本古书解开千年谜题</h3>
+                <p style="font-family: var(--serif); line-height: 2;">
+                    1937年，梁思成、林徽因在五台山发现了佛光寺东大殿。
+                    在那个没有碳-14测年技术的时代，如何判断这座建筑的确切年代？
+                </p>
+                <p style="font-family: var(--serif); line-height: 2;">
+                    答案正是《营造法式》。梁思成发现佛光寺的<strong>斗拱比例</strong>与《营造法式》中记载的
+                    唐代用材制度完全一致——这座大殿被准确断代为<strong>唐大中十一年（公元857年）</strong>，
+                    一举打破了日本学者"中国已无唐代木构"的断言。
+                </p>
+            </div>
+
+            <div class="chart-container fade-in-delay-1" id="influenceChart"></div>
+            <canvas id="particleCanvas" style="width:100%;height:120px;margin-top:-20px;opacity:0.8;"></canvas>
+
+            <div class="card-grid fade-in-delay-2">
+                <div class="card">
+                    <h3 style="font-family: var(--serif); color: var(--accent);">🏛️ 太原晋祠圣母殿</h3>
+                    <span class="tag">"副阶周匝"制度</span>
+                    <p style="margin-top: 8px;">北宋天圣年间创建，其四周环绕廊子的做法正是《营造法式》中记载的标准制度之一。梁思成称其为"中国古代建筑中具有典范性的北宋建筑"。</p>
+                </div>
+                <div class="card">
+                    <h3 style="font-family: var(--serif); color: var(--accent);">🏯 蓟县独乐寺观音阁</h3>
+                    <span class="tag">用材制度吻合</span>
+                    <p style="margin-top: 8px;">辽统和二年重建，三层木构楼阁。其斗拱用材比例与《营造法式》高度吻合，历经28次大地震依然屹立。</p>
+                </div>
+                <div class="card">
+                    <h3 style="font-family: var(--serif); color: var(--accent);">🏰 北京故宫</h3>
+                    <span class="tag">模数思想的延续</span>
+                    <p style="margin-top: 8px;">明清皇家宫殿，虽以清代《工程做法》为依据，但其核心的模数化思想正是《营造法式》体系的直接延续。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ 第五页：传承 ============ -->
+    <section class="page" id="page5">
+        <div class="page-inner fade-in">
+            <div class="page-number">终章</div>
+            <h2 class="page-title">传承：今天的我们</h2>
+            <p class="page-subtitle">标准化、模块化、工匠精神——这些诞生于九百年前的智慧，仍在定义我们的时代</p>
+
+            <div class="card fade-in-delay-1">
+                <p style="font-family: var(--serif); font-size: 1.15rem; line-height: 2.2; text-align: center;">
+                    从<strong>李诫</strong>的"材份制"，到今日的<strong>BIM（建筑信息模型）</strong>；<br>
+                    从宋代的"有定法而无定式"，到当代的<strong>参数化设计</strong>；<br>
+                    中国古代建筑中蕴含的<strong style="color: var(--accent);">标准化思想</strong>，<br>
+                    穿越近千年的时空，依然熠熠生辉。
+                </p>
+            </div>
+
+            <div class="card fade-in-delay-2" style="background: linear-gradient(135deg, #faf7f2 0%, #f0e8d8 100%);">
+                <p style="text-align: center; font-family: var(--serif); font-size: 1.5rem; color: var(--accent); letter-spacing: 0.08em;">
+                    致敬李诫<br>
+                    <span style="font-size: 1rem; color: #6b5e4a;">1035 — 1110</span>
+                </p>
+                <p style="text-align: center; font-family: var(--serif); margin-top: 16px; color: #6b5e4a;">
+                    将作监丞，以法式立规矩<br>
+                    千载营造，为后世定准绳
+                </p>
+            </div>
+
+            <div class="card card-highlight fade-in-delay-3">
+                <h3 style="font-family: var(--serif); color: var(--accent); margin-bottom: 12px; font-size: 1.2rem;">💡 今日之思</h3>
+                <p style="font-family: var(--serif); font-size: 1.1rem; line-height: 2.2; text-align: center;">
+                    今天，当我们用<strong>BIM技术</strong>建造摩天大楼时，<br>
+                    当我们在软件中输入参数、自动生成建筑模型时，<br>
+                    或许不会想到——<br>
+                    这种<strong>"标准化 + 模数化"</strong>的思想，<br>
+                    早在<strong>九百年前</strong>，就已经被写入了一本叫做《营造法式》的书里。
+                </p>
+                <div class="divider"></div>
+                <p style="font-family: var(--serif); font-size: 1.15rem; line-height: 2.2; text-align: center; color: var(--accent); font-weight: 600;">
+                    李诫和他的"材份制"，<br>
+                    是中华文明贡献给世界建筑史的一份独特智慧。
+                </p>
+            </div>
+
+            <p style="text-align: center; margin-top: 40px; color: #8b7355; font-family: var(--serif); opacity: 0.7; font-size: 0.9rem;">
+                《法式数诠》—— 一部宋代建筑"代码"书的数字重生
+            </p>
+        </div>
+    </section>
+
+    <script>
+        // ============ 全局数据 ============
+        const materialsData = {
+            "materials": [
+                { "grade": "一等材", "height": 9, "width": 6, "zhi": 3.6, "usage": "大殿（九至十一间）",
+                    "example": "柱径标准 = 材高×2 = 18寸 ≈ 54厘米" },
+                { "grade": "二等材", "height": 8.25, "width": 5.5, "zhi": 3.3, "usage": "大殿（五至七间）",
+                    "example": "柱径标准 = 材高×2 = 16.5寸 ≈ 49.5厘米" },
+                { "grade": "三等材", "height": 7.5, "width": 5, "zhi": 3, "usage": "大殿（三至五间）或厅堂（七间）",
+                    "example": "柱径标准 = 材高×2 = 15寸 ≈ 45厘米" },
+                { "grade": "四等材", "height": 7.2, "width": 4.8, "zhi": 2.88, "usage": "大殿（三间）或厅堂（五间）",
+                    "example": "柱径标准 = 材高×2 = 14.4寸 ≈ 43.2厘米" },
+                { "grade": "五等材", "height": 6.6, "width": 4.4, "zhi": 2.64, "usage": "小殿（三间）或厅堂（大三间）",
+                    "example": "柱径标准 = 材高×2 = 13.2寸 ≈ 39.6厘米" },
+                { "grade": "六等材", "height": 6, "width": 4, "zhi": 2.4, "usage": "亭榭或小厅堂",
+                    "example": "柱径标准 = 材高×2 = 12寸 ≈ 36厘米" },
+                { "grade": "七等材", "height": 5.25, "width": 3.5, "zhi": 2.1, "usage": "小殿或亭榭",
+                    "example": "柱径标准 = 材高×2 = 10.5寸 ≈ 31.5厘米" },
+                { "grade": "八等材", "height": 4.5, "width": 3, "zhi": 1.8, "usage": "藻井或小亭榭",
+                    "example": "柱径标准 = 材高×2 = 9寸 ≈ 27厘米" }
+            ],
+            "dougong": {
+                "components": ["栌斗", "华栱", "泥道栱", "昂", "耍头", "衬方头"],
+                "proportions": "华栱出跳长度通常为30分（即材高的两倍），昂身长度随跳数加倍，横栱长度依构造递减。"
+            }
+        };
+
+        // ============ 导航 ============
+        const pages = document.querySelectorAll('.page');
+        const navDots = document.querySelectorAll('.nav-dot');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const pageIndex = Array.from(pages).indexOf(entry.target);
+                    updateNavDots(pageIndex);
+                }
+            });
+        }, { threshold: 0.5 });
+        pages.forEach(page => observer.observe(page));
+
+        function updateNavDots(index) {
+            navDots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+        }
+        navDots.forEach((dot, i) => {
+            dot.addEventListener('click', () => pages[i].scrollIntoView({ behavior: 'smooth' }));
+        });
+
+        // ============ 第二页：材等选择器 ============
+        const materialBtnsContainer = document.getElementById('materialBtns');
+        const materialInfo = document.getElementById('materialInfo');
+        const scaleLabel = document.getElementById('scaleLabel');
+        materialsData.materials.forEach((mat, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'btn btn-sm material-btn';
+            if (index === 0) btn.classList.add('active');
+            btn.textContent = mat.grade;
+            btn.dataset.index = index;
+            btn.addEventListener('click', () => handleMaterialSelect(index));
+            materialBtnsContainer.appendChild(btn);
+        });
+
+        function handleMaterialSelect(index) {
+            const mat = materialsData.materials[index];
+            document.querySelectorAll('.material-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.material-btn')[index].classList.add('active');
+            const scaleFactor = mat.height / 9;
+            updateBuildingScale(scaleFactor);
+            scaleLabel.textContent = `${mat.grade} · ${mat.usage}`;
+            materialInfo.innerHTML = `
+                <p>📐 <span class="highlight-text">${mat.grade}</span>：材高 <span class="highlight-text">${mat.height}寸</span>，材宽 <span class="highlight-text">${mat.width}寸</span>，栔 <span class="highlight-text">${mat.zhi}寸</span></p>
+                <p style="font-size:0.9rem;opacity:0.8;">适用建筑：${mat.usage}</p>
+                <div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.2);">
+                    <p style="font-size:0.85rem;">📏 <span class="highlight-text">换算示例</span>：${mat.example}</p>
+                    <p style="font-size:0.8rem;opacity:0.7;">斗拱出跳长度 = 材高×3 ≈ ${(mat.height*3).toFixed(1)}寸</p>
+                </div>
+            `;
+        }
+        /*
+
+        function updateBuildingScale(factor) {
+            const cols = ['col1', 'col2', 'col3'];
+            cols.forEach(id => {
+                const rect = document.getElementById(id);
+                rect.setAttribute('width', 18 * factor);
+                rect.setAttribute('height', 150 * factor);
+                rect.setAttribute('y', 370 - (150 * factor));
+            });
+            const dougongBase = document.getElementById('dougongBase');
+            dougongBase.setAttribute('height', 50 * factor);
+            dougongBase.setAttribute('y', 370 - 150 * factor - 50 * factor);
+            const roof = document.getElementById('roof');
+            const roofBaseY = 370 - 150 * factor - 50 * factor;
+            roof.setAttribute('points', `60,${roofBaseY} 200,${roofBaseY - 80*factor} 340,${roofBaseY}`);
+            document.getElementById('platform').setAttribute('height', 30 * factor);
+        }
+        */
+       function updateBuildingScale(factor) {
+    // 基准值（一等材时的尺寸）
+    const basePlatformH = 30;
+    const baseColH = 150;
+    const baseDougongH = 50;
+    const baseRoofH = 80;
+
+    // 缩放后的尺寸
+    const platformH = basePlatformH * factor;
+    const colH = baseColH * factor;
+    const dougongH = baseDougongH * factor;
+    const roofH = baseRoofH * factor;
+
+    // 关键 Y 坐标（从下往上计算）
+    const platformY = 370;                          // 台基顶部
+    const colTopY = platformY - platformH;          // 柱子顶部 = 台基顶部 - 台基高度
+    const colBottomY = colTopY - colH;              // 柱子底部
+    const dougongTopY = colBottomY;                  // 斗拱顶部 = 柱子底部
+    const dougongBottomY = dougongTopY - dougongH;   // 斗拱底部
+    const roofBaseY = dougongBottomY;                // 屋顶底面 = 斗拱底部
+    const roofPeakY = roofBaseY - roofH;             // 屋顶顶面
+
+    // 更新台基
+    const platform = document.getElementById('platform');
+    platform.setAttribute('y', platformY);
+    platform.setAttribute('height', platformH);
+
+    // 更新柱子
+    const cols = ['col1', 'col2', 'col3'];
+    cols.forEach(id => {
+        const rect = document.getElementById(id);
+        rect.setAttribute('width', 18 * factor);
+        rect.setAttribute('height', colH);
+        rect.setAttribute('y', colBottomY);
+    });
+
+    // 更新阑额（横梁）
+    const beam = document.getElementById('beam');
+    beam.setAttribute('y', colBottomY - 4);
+    beam.setAttribute('height', 14 * factor);
+
+    // 更新斗拱层
+    const dougongBase = document.getElementById('dougongBase');
+    dougongBase.setAttribute('y', dougongBottomY);
+    dougongBase.setAttribute('height', dougongH);
+
+    // 更新栌斗（5个）
+    const ludouBaseY = dougongBottomY + dougongH * 0.3;
+    const ludouH = 16 * factor;
+    for (let i = 1; i <= 5; i++) {
+        const ludou = document.getElementById('ludou' + i);
+        if (ludou) {
+            ludou.setAttribute('height', ludouH);
+            ludou.setAttribute('y', ludouBaseY);
+        }
+    }
+
+    // 更新屋顶
+    const roof = document.getElementById('roof');
+    roof.setAttribute('points', `60,${roofBaseY} 200,${roofPeakY} 340,${roofBaseY}`);
+
+    // 更新屋脊装饰
+    const finial = document.getElementById('finial');
+    finial.setAttribute('cy', roofPeakY + 3);
+}
+
+
+        // ============ 第三页：斗拱拆解（SVG交互） ============
+        const dougongBtns = document.querySelectorAll('.dougong-btn');
+        const dougongGroups = document.querySelectorAll('.dg-group');
+        const dougongInfo = document.getElementById('dougongInfo');
+        const componentDescriptions = {
+            'ludou': '栌斗 —— <strong>斗拱的"地基"</strong>，坐于柱头之上，将上层所有构件的重量集中传递到柱子。',
+            'nidao': '泥道栱 —— 平行于墙面的<strong>横向连结构件</strong>，将相邻的斗拱连接成一个整体。',
+            'huagong': '华栱 —— 垂直于墙面向外<strong>出跳</strong>的主要构件，决定了屋檐能挑出多远。',
+            'ang': '昂 —— 利用<strong>杠杆原理</strong>的斜向构件，将屋顶重量"撬"回内柱。',
+            'shuatou': '耍头 —— 位于最外跳顶端的<strong>收束构件</strong>，防止昂端上翘。',
+            'chenfang': '衬方头 —— 耍头之上的<strong>方形垫木</strong>，连接斗拱与上部梁架。'
+        };
+        dougongBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const action = btn.dataset.action;
+                dougongBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                dougongGroups.forEach(g => {
+                    g.classList.remove('dimmed');
+                    g.style.transform = 'translate(0, 0)';
+                    g.querySelectorAll('rect, polygon').forEach(el => el.classList.remove(
+                        'highlight'));
+                });
+                switch (action) {
+                    case 'reset':
+                        dougongInfo.innerHTML =
+                            '<p>🔍 <strong>完整视图</strong>：斗拱由六层主要构件精密咬合而成。</p><p style="font-size:0.8rem;opacity:0.7;">' +
+                            materialsData.dougong.proportions + '</p>';
+                        break;
+                    case 'highlight-ludou':
+                        highlightGroup('ludou');
+                        dougongInfo.innerHTML = '<p>✨ ' + componentDescriptions['ludou'] + '</p>';
+                        break;
+                    case 'highlight-huagong':
+                        highlightGroup('huagong');
+                        dougongInfo.innerHTML = '<p>✨ ' + componentDescriptions['huagong'] + '</p>';
+                        break;
+                    case 'highlight-nidao':
+                        highlightGroup('nidao');
+                        dougongInfo.innerHTML = '<p>✨ ' + componentDescriptions['nidao'] + '</p>';
+                        break;
+                    case 'highlight-ang':
+                        highlightGroup('ang');
+                        dougongInfo.innerHTML = '<p>✨ ' + componentDescriptions['ang'] + '</p>';
+                        break;
+                    case 'highlight-shuatou':
+                        highlightGroup('shuatou');
+                        dougongInfo.innerHTML = '<p>✨ ' + componentDescriptions['shuatou'] + '</p>';
+                        break;
+                    case 'explode':
+                        dougongInfo.innerHTML =
+                            '<p>💥 <strong>拆解视图</strong> —— 六层构件各自独立，3秒后自动复原。</p>';
+                        explodeDougong();
+                        break;
+                }
+            });
+        });
+
+        function highlightGroup(groupName) {
+            dougongGroups.forEach(g => {
+                if (g.dataset.group === groupName) {
+                    g.querySelectorAll('rect, polygon').forEach(el => el.classList.add('highlight'));
+                } else {
+                    g.classList.add('dimmed');
+                }
+            });
+        }
+
+        function explodeDougong() {
+            const offsets = {
+                'chenfang': { x: 0, y: -80 },
+                'shuatou': { x: -60, y: -50 },
+                'ang': { x: 60, y: -20 },
+                'huagong': { x: -60, y: 10 },
+                'nidao': { x: 60, y: 40 },
+                'ludou': { x: 0, y: 70 }
+            };
+            dougongGroups.forEach(g => {
+                const groupName = g.dataset.group;
+                if (offsets[groupName]) {
+                    g.style.transform = `translate(${offsets[groupName].x}px, ${offsets[groupName].y}px)`;
+                    g.style.transition = 'transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1)';
+                }
+            });
+            setTimeout(() => dougongGroups.forEach(g => g.style.transform = 'translate(0, 0)'), 3000);
+        }
+
+        // ============ ECharts ============
+        function initInfluenceChart() {
+            const chartDom = document.getElementById('influenceChart');
+            if (!chartDom) return;
+            const myChart = echarts.init(chartDom);
+            myChart.setOption({
+                backgroundColor: 'transparent',
+                tooltip: { trigger: 'item', backgroundColor: 'rgba(58,50,38,0.9)',
+                    borderColor: '#d4c5a9', textStyle: { color: '#f5f0e8' } },
+                grid: { left: '5%', right: '5%', top: '15%', bottom: '15%' },
+                xAxis: {
+                    type: 'category',
+                    data: ['晋祠圣母殿\n1023-1032', '独乐寺观音阁\n984年重建', '北京故宫\n1406-1420'],
+                    axisLabel: { color: '#6b5e4a', fontFamily: 'var(--serif)', fontSize: 11, formatter: v => v
+                            .split('\n')[0] }
+                },
+                yAxis: { type: 'value', name: '影响力指数', max: 100, splitLine: { lineStyle: { color: '#e8dcc8',
+                            type: 'dashed' } } },
+                series: [{
+                    type: 'bar', data: [85, 78, 95],
+                    itemStyle: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0,
+                            color: '#b23a2a' }, { offset: 1, color: '#e8c45a' }]),
+                        borderRadius: [6, 6, 0, 0]
+                    },
+                    label: { show: true, position: 'top', color: '#3a3226', fontWeight: 'bold' },
+                    barWidth: '45%'
+                }],
+                graphic: [{ type: 'text', left: 'center', top: '2%', style: { text: '《营造法式》影响指数',
+                        fill: '#3a3226', font: 'bold 16px "var(--serif)"' } }]
+            });
+            window.addEventListener('resize', () => myChart.resize());
+        }
+
+        // ============ 粒子流 ============
+        function initParticleFlow() {
+            const canvas = document.getElementById('particleCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.parentElement.offsetWidth;
+            canvas.height = 120;
+            const particles = Array.from({ length: 60 }, () => ({
+                x: Math.random() * canvas.width,
+                y: canvas.height / 2 + (Math.random() - 0.5) * 60,
+                size: Math.random() * 2.5 + 1,
+                speed: Math.random() * 1.5 + 0.5,
+                opacity: Math.random() * 0.6 + 0.3,
+                golden: Math.random() > 0.3
+            }));
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.strokeStyle = 'rgba(212, 197, 169, 0.3)';
+                ctx.setLineDash([4, 12]);
+                ctx.beginPath();
+                ctx.moveTo(0, canvas.height / 2);
+                ctx.lineTo(canvas.width, canvas.height / 2);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                particles.forEach(p => {
+                    p.x += p.speed;
+                    if (p.x > canvas.width + 20) { p.x = -20;
+                        p.y = canvas.height / 2 + (Math.random() - 0.5) * 60; }
+                    p.opacity = Math.max(0.1, Math.min(0.8, p.opacity + (Math.random() - 0.5) *
+                        0.02));
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fillStyle = p.golden ? `rgba(232,196,90,${p.opacity})` :
+                        `rgba(178,58,42,${p.opacity*0.6})`;
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size * 2.5, 0, Math.PI * 2);
+                    ctx.fillStyle = p.golden ? `rgba(232,196,90,${p.opacity*0.15})` :
+                        `rgba(178,58,42,${p.opacity*0.1})`;
+                    ctx.fill();
+                });
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        // ============ 墨迹渐现 ============
+        function initInkReveal() {
+    const inkElements = document.querySelectorAll('.ink-reveal');
+    
+    // 先给所有元素标记为"准备就绪"，此时才隐藏文字
+    inkElements.forEach(el => el.classList.add('ink-ready'));
+    
+    const inkObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('ink-visible');
+            }
+        });
+    }, { threshold: 0.3 });
+    
+    inkElements.forEach(el => inkObserver.observe(el));
+    
+    // 兜底：2秒后强制显示所有文字（防止 observer 漏触发）
+    setTimeout(() => {
+        inkElements.forEach(el => el.classList.add('ink-visible'));
+    }, 2000);
+}
+
+        // ============ 淡入元素 ============
+        const fadeObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.2 });
+        document.querySelectorAll('.fade-in').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+            fadeObserver.observe(el);
+        });
+
+        // ============ DOM加载完成后初始化 ============
+        document.addEventListener('DOMContentLoaded', () => {
+            initInfluenceChart();
+            initParticleFlow();
+            initInkReveal();
+            handleMaterialSelect(0);
+            initThreeJS();
+        });
+    </script>
+
+    <!-- ============ Three.js 3D查看器模块 ============ -->
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+        // 暴露初始化函数到全局
+        window.initThreeJS = function() {
+            const container = document.getElementById('three-canvas');
+            if (!container) return;
+
+            // --- 场景 ---
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color('#1a1815');
+            scene.fog = new THREE.Fog('#1a1815', 5, 30);
+
+            // --- 相机 ---
+            const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+            camera.position.set(4, 3, 8);
+
+            // --- 渲染器 ---
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.outputColorSpace = THREE.SRGBColorSpace;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.2;
+            renderer.shadowMap.enabled = true;
+            container.appendChild(renderer.domElement);
+
+            // --- 控制器 ---
+            const controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.08;
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 0.6;
+            controls.target.set(0, 0.5, 0);
+            controls.minDistance = 3;
+            controls.maxDistance = 20;
+            controls.maxPolarAngle = Math.PI * 0.7;
+            controls.update();
+
+            // --- 光照 ---
+            scene.add(new THREE.AmbientLight('#fff5e8', 0.8));
+            const keyLight = new THREE.DirectionalLight('#ffffff', 2.5);
+            keyLight.position.set(8, 12, 6);
+            keyLight.castShadow = true;
+            keyLight.shadow.mapSize.set(1024, 1024);
+            keyLight.shadow.camera.near = 0.5;
+            keyLight.shadow.camera.far = 50;
+            scene.add(keyLight);
+            const fillLight = new THREE.DirectionalLight('#d4c5a9', 0.8);
+            fillLight.position.set(-4, 2, -3);
+            scene.add(fillLight);
+            const rimLight = new THREE.DirectionalLight('#e8c45a', 1.0);
+            rimLight.position.set(0, 1, -6);
+            scene.add(rimLight);
+
+            // --- 展台 ---
+            const pedestalGeo = new THREE.CylinderGeometry(1.2, 1.4, 0.2, 48);
+            const pedestalMat = new THREE.MeshStandardMaterial({ color: '#3a3226', roughness: 0.6,
+                metalness: 0.2 });
+            const pedestal = new THREE.Mesh(pedestalGeo, pedestalMat);
+            pedestal.position.y = -1.8;
+            pedestal.castShadow = true;
+            pedestal.receiveShadow = true;
+            scene.add(pedestal);
+
+            // --- 地面网格线 ---
+            const gridHelper = new THREE.PolarGridHelper(5, 36, 24, 128, '#2a2218', '#2a2218');
+            gridHelper.position.y = -2.0;
+            scene.add(gridHelper);
+
+            // --- 模型加载 ---
+            const loader = new GLTFLoader();
+            let model = null;
+            const modelHint = document.getElementById('model-hint');
+            /*
+            loader.load(
+                './models/scene.gltf',
+                (gltf) => {
+                    model = gltf.scene;
+                    const box = new THREE.Box3().setFromObject(model);
+                    const center = new THREE.Vector3();
+                    box.getCenter(center);
+                    model.position.set(-center.x, -center.y - 1.5, -center.z);
+                    const size = box.getSize(new THREE.Vector3());
+                    const maxDim = Math.max(size.x, size.y, size.z);
+                    const scale = 4 / maxDim;
+                    model.scale.setScalar(scale);
+                    model.traverse(child => {
+                        if (child.isMesh) {
+                            child.castShadow = true;
+                            child.receiveShadow = true;
+                        }
+                    });
+                    scene.add(model);
+
+                    // 入场动画
+                    gsap.from(camera.position, { z: 14, duration: 2.5, ease: "power3.out" });
+                    gsap.from(controls.target, { y: -2, duration: 2.5, ease: "power3.out" });
+
+                    // 渐隐提示
+                    if (modelHint) {
+                        setTimeout(() => { modelHint.style.opacity = '0'; }, 6000);
+                    }
+                },
+                undefined,
+                (error) => {
+                    console.warn('3D模型加载失败，请检查 ./models/scene.gltf 路径。', error);
+                    if (modelHint) modelHint.textContent = '模型加载中，请稍候...';
+                }
+            );
+            */
+           loader.load(
+    './models/scene.gltf',
+    (gltf) => {
+        model = gltf.scene;
+
+        // 计算包围盒
+        const box = new THREE.Box3().setFromObject(model);
+        const size = box.getSize(new THREE.Vector3());
+        const center = box.getCenter(new THREE.Vector3());
+
+        // 缩放模型，使最大维度为4个单位
+        const maxDim = Math.max(size.x, size.y, size.z);
+        const scale = 4 / maxDim;
+        model.scale.setScalar(scale);
+
+        // 展台顶面 Y 坐标（展台在 y=-1.8，高度0.2，顶面在 y=-1.7）
+        const pedestalTopY = -1.7;
+
+        // 缩放后包围盒底部 Y 坐标
+        const scaledMinY = (box.min.y - center.y) * scale + center.y;
+
+        // 将模型底部精确对齐到展台顶面
+        model.position.set(
+            -center.x * scale,
+            -scaledMinY + pedestalTopY,
+            -center.z * scale
+        );
+
+        // 设置阴影
+        model.traverse(child => {
+            if (child.isMesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
+            }
+        });
+
+        scene.add(model);
+
+        // 更新 OrbitControls 的注视点
+        controls.target.set(0, 0.3, 0);
+        controls.update();
+
+        // 入场动画
+        gsap.from(camera.position, { z: 14, duration: 2.5, ease: "power3.out" });
+
+        // 渐隐操作提示
+        if (modelHint) {
+            setTimeout(() => { modelHint.style.opacity = '0'; }, 6000);
+        }
+
+        console.log('✅ 3D斗拱模型加载完成，已精确对齐展台');
+    },
+    undefined,
+    (error) => {
+        console.warn('3D模型加载失败，请检查 ./models/scene.gltf 路径。', error);
+        if (modelHint) modelHint.textContent = '模型加载中，请稍候...';
+    }
+);
+
+            // --- 视角切换 ---
+            const viewButtons = document.querySelectorAll('.tool-btn[data-view]');
+            const autoRotateBtn = document.getElementById('btn-auto-rotate');
+            const viewPositions = {
+                'all': { pos: [4, 3, 8], target: [0, 0.5, 0] },
+                'top': { pos: [0, 10, 1], target: [0, 0, 0] },
+                'bottom': { pos: [0, -6, 4], target: [0, -1, 0] },
+                'front': { pos: [0, 0.5, 8], target: [0, 0.5, 0] },
+                'side': { pos: [8, 0.5, 0], target: [0, 0.5, 0] },
+                'auto': null
+            };
+
+            viewButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const view = btn.dataset.view;
+                    viewButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    if (view === 'auto') {
+                        controls.autoRotate = !controls.autoRotate;
+                        autoRotateBtn.textContent = `自动旋转：${controls.autoRotate ? '开' : '关'}`;
+                        return;
+                    }
+
+                    const vp = viewPositions[view];
+                    if (vp) {
+                        gsap.to(camera.position, { x: vp.pos[0], y: vp.pos[1], z: vp.pos[2],
+                            duration: 1.8, ease: "power2.inOut" });
+                        gsap.to(controls.target, { x: vp.target[0], y: vp.target[1], z: vp.target[2],
+                            duration: 1.8, ease: "power2.inOut" });
+                    }
+                });
+            });
+
+            // --- 动画循环 ---
+            function animate() {
+                requestAnimationFrame(animate);
+                controls.update();
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            // --- 响应式 ---
+            window.addEventListener('resize', () => {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
+
+            console.log('🏛️ 3D斗拱查看器已就绪');
+        };
+    </script>
+</body>
+</html>

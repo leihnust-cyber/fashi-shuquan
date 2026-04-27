@@ -873,7 +873,7 @@
                     <p style="font-family:var(--serif);line-height:1.9;font-size:0.95rem;">转角铺作需要同时承托<strong>两个方向</strong>的屋檐出挑——正面与侧面在此交汇，因此其构件数量更多、咬合关系更复杂。这一件模型提取了六铺作或七铺作中<strong>最外跳的部分</strong>，呈现出如<strong>鱼形般舒展的优美轮廓</strong>。</p>
                     <span class="tag">转角铺作</span><span class="tag">大木作制度</span><span class="tag">六七铺作</span>
                 </div>
-                <div class="card" style="padding:20px;margin-bottom:16px;">
+                <div class="card" style="padding:20px;margin-bottom:18px;">
                     <h3 style="font-family:var(--serif);color:var(--gold);margin-bottom:8px;font-size:1rem;">📐 等级公式：铺作数 = 出跳数 + 3</h3>
                     <p style="font-family:var(--serif);line-height:1.8;font-size:0.9rem;">《营造法式》中，铺作的等级遵循公式：<strong>铺作数 = 出跳数 + 3</strong>。其中"3"指固定存在的栌斗、耍头、衬方头。<strong>四铺作</strong>（出1跳）是最基础样式；<strong>七铺作</strong>（出4跳）则是现存宋代地面建筑的最高规格。</p>
                     <span class="tag">出跳数+3</span><span class="tag">四至八铺作</span>
@@ -882,7 +882,7 @@
                     <p style="font-family:var(--serif);font-size:1rem;color:var(--gold);line-height:2;">转动右侧模型——<br>层层出跳的华栱与昂，仿佛<strong>一尾游鱼展开的鳍与尾</strong>，<br>在空间中凝固成<strong>动态的平衡</strong>。<br>这是中国古建筑独有的美学。</p>
                 </div>
             </div>
-            <div class="split-right fade-in-delay-1" style="margin-top: 180px;">
+            <div class="split-right fade-in-delay-1" style="margin-top: 180px; min-height: 750px;">
                 <div id="three-canvas"></div>
                 <div class="model-hint" id="model-hint">🖱️ 拖拽旋转 · 滚轮缩放 · 右键平移</div>
                 <div class="model-toolbar">
@@ -1365,7 +1365,7 @@
                 const targetScale = 3.2 / maxDim;
                 model.scale.setScalar(targetScale);
                 const scaledMinY = (box.min.y - center.y) * targetScale;
-                const pedestalTopY = 1.4;
+                const pedestalTopY = 1.32;
                 model.position.set(-center.x * targetScale, -scaledMinY + pedestalTopY, -center.z * targetScale);
                 model.traverse(child => {
                     if (child.isMesh) {

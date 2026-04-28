@@ -26,602 +26,189 @@
             --transition: 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior:smooth; }
 
         body {
-            font-family: var(--sans);
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.8;
-            overflow-x: hidden;
-            background-attachment: fixed;
-            position: relative;
+            font-family: var(--sans); background: var(--bg); color: var(--text);
+            line-height: 1.8; overflow-x: hidden; background-attachment: fixed; position: relative;
             background-image:
-                radial-gradient(ellipse at 20% 50%, rgba(139, 105, 20, 0.03) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 20%, rgba(178, 58, 42, 0.03) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 80%, rgba(139, 105, 20, 0.02) 0%, transparent 50%);
+                radial-gradient(ellipse at 20% 50%, rgba(139,105,20,0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(178,58,42,0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(139,105,20,0.02) 0%, transparent 50%);
         }
-
         body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-            opacity: 0.04;
-            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(139, 105, 20, 0.1) 2px,
-                    rgba(139, 105, 20, 0.1) 4px);
+            content:''; position:fixed; top:0; left:0; width:100%; height:100%;
+            pointer-events:none; z-index:-1; opacity:0.04;
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(139,105,20,0.1) 2px, rgba(139,105,20,0.1) 4px);
         }
 
-        /* ====== 封面页 ====== */
         .cover-page {
-            position: relative;
-            width: 100%;
-            height: 100vh;
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
-            overflow: hidden;
-            scroll-snap-align: start;
+            position:relative; width:100%; height:100vh; display:flex; align-items:flex-start;
+            justify-content:center; overflow:hidden; scroll-snap-align:start;
         }
-
-        .cover-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: 0;
-        }
-
+        .cover-bg { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:0; }
         .cover-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(180deg, rgba(26, 24, 21, 0.6) 0%, rgba(26, 24, 21, 0.75) 100%);
-            z-index: 1;
+            position:absolute; top:0; left:0; width:100%; height:100%;
+            background:linear-gradient(180deg, rgba(26,24,21,0.6) 0%, rgba(26,24,21,0.75) 100%); z-index:1;
         }
-
         .cover-content {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            color: #f5f0e8;
-            margin-top: 22vh;
+            position:relative; z-index:2; text-align:center; color:#f5f0e8; margin-top:22vh;
         }
-
         .cover-title {
-            font-family: var(--serif);
-            font-size: 4rem;
-            font-weight: 900;
-            letter-spacing: 0.12em;
-            margin-bottom: 16px;
-            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+            font-family:var(--serif); font-size:4rem; font-weight:900; letter-spacing:0.12em;
+            margin-bottom:16px; text-shadow:0 2px 20px rgba(0,0,0,0.5);
         }
-
-        .cover-title.ink-ready {
-            clip-path: inset(0 100% 0 0);
-            transition: clip-path 2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .cover-title.ink-visible {
-            clip-path: inset(0 0 0 0);
-        }
-
+        .cover-title.ink-ready { clip-path:inset(0 100% 0 0); transition:clip-path 2s cubic-bezier(0.4,0,0.2,1); }
+        .cover-title.ink-visible { clip-path:inset(0 0 0 0); }
         .cover-subtitle {
-            font-family: var(--serif);
-            font-size: 1.3rem;
-            letter-spacing: 0.15em;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 1.2s ease 1s;
-            color: #d4c5a9;
-            position: relative;
-            overflow: hidden;
-            display: inline-block;
+            font-family:var(--serif); font-size:1.3rem; letter-spacing:0.15em; opacity:0;
+            transform:translateY(20px); transition:all 1.2s ease 1s; color:#d4c5a9;
+            position:relative; overflow:hidden; display:inline-block; line-height:1.8;
         }
-
-        .cover-subtitle.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
+        .cover-subtitle.visible { opacity:1; transform:translateY(0); }
         .cover-subtitle::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #e8c45a, transparent);
-            animation: coverSweep 3s ease-in-out infinite;
+            content:''; position:absolute; bottom:-2px; left:0; width:100%; height:1px;
+            background:linear-gradient(90deg, transparent, #e8c45a, transparent);
+            animation:coverSweep 3s ease-in-out infinite;
         }
-
         @keyframes coverSweep {
-            0% {
-                transform: translateX(-100%);
-            }
-            50% {
-                transform: translateX(100%);
-            }
-            100% {
-                transform: translateX(-100%);
-            }
+            0%{transform:translateX(-100%);} 50%{transform:translateX(100%);} 100%{transform:translateX(-100%);}
         }
-
         .cover-scroll-hint {
-            position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 2;
-            color: rgba(212, 197, 169, 0.7);
-            font-family: var(--serif);
-            font-size: 0.85rem;
-            letter-spacing: 0.1em;
-            animation: floatHint 2s ease-in-out infinite;
+            position:absolute; bottom:40px; left:50%; transform:translateX(-50%); z-index:2;
+            color:rgba(212,197,169,0.7); font-family:var(--serif); font-size:0.85rem;
+            letter-spacing:0.1em; animation:floatHint 2s ease-in-out infinite;
         }
-
         @keyframes floatHint {
-            0%,
-            100% {
-                transform: translateX(-50%) translateY(0);
-            }
-            50% {
-                transform: translateX(-50%) translateY(8px);
-            }
+            0%,100%{transform:translateX(-50%) translateY(0);} 50%{transform:translateX(-50%) translateY(8px);}
         }
 
         .page {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 80px 20px;
-            position: relative;
-            scroll-snap-align: start;
+            min-height:100vh; display:flex; flex-direction:column; align-items:center;
+            justify-content:center; padding:80px 20px; position:relative; scroll-snap-align:start;
         }
-
-        .page-inner {
-            max-width: 900px;
-            width: 100%;
-            margin: 0 auto;
-        }
-
-        .page-split {
-            display: flex;
-            flex-direction: row;
-            align-items: flex-start;
-            justify-content: center;
-            gap: 30px;
-            max-width: 1400px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 80px 20px;
-            min-height: 100vh;
-        }
-
-        .page-split .split-left {
-            flex: 0 0 380px;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            overflow-y: visible;
-            max-height: none;
-            padding-right: 10px;
-            padding-top: 0;
-            padding-bottom: 80px;
-        }
-
-        .page-split .split-right {
-            flex: 1;
-            min-height: 600px;
-            position: relative;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-            background: #1a1815;
-            box-shadow: var(--shadow);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .split-right #three-canvas {
-            flex: 1;
-            width: 100%;
-            cursor: grab;
-        }
-
-        .split-right #three-canvas:active {
-            cursor: grabbing;
-        }
-
-        .split-right .model-toolbar {
-            display: flex;
-            gap: 8px;
-            padding: 10px 14px;
-            background: rgba(26, 24, 21, 0.95);
-            border-top: 1px solid rgba(212, 197, 169, 0.15);
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .split-right .model-toolbar .tool-btn {
-            padding: 6px 14px;
-            border: 1px solid rgba(212, 197, 169, 0.3);
-            border-radius: 4px;
-            background: transparent;
-            color: #d4c5a9;
-            font-family: var(--serif);
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            letter-spacing: 0.04em;
-            white-space: nowrap;
-        }
-
-        .split-right .model-toolbar .tool-btn:hover {
-            background: rgba(178, 58, 42, 0.2);
-            border-color: var(--accent);
-            color: #e8c45a;
-        }
-
-        .split-right .model-toolbar .tool-btn.active {
-            background: rgba(178, 58, 42, 0.3);
-            border-color: var(--accent);
-            color: #e8c45a;
-        }
-
-        .split-right .model-hint {
-            position: absolute;
-            bottom: 60px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: rgba(212, 197, 169, 0.5);
-            font-family: var(--serif);
-            font-size: 0.75rem;
-            pointer-events: none;
-            z-index: 10;
-            transition: opacity 1s ease;
-        }
-
+        .page-inner { max-width:900px; width:100%; margin:0 auto; }
         .page-number {
-            font-family: var(--serif);
-            font-size: 0.85rem;
-            color: var(--accent);
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-            opacity: 0.7;
+            font-family:var(--serif); font-size:0.85rem; color:var(--accent);
+            letter-spacing:0.2em; text-transform:uppercase; margin-bottom:8px; opacity:0.7;
         }
-
         .page-title {
-            font-family: var(--serif);
-            font-size: 2.6rem;
-            font-weight: 700;
-            color: #2a2218;
-            margin-bottom: 16px;
-            letter-spacing: 0.04em;
-            line-height: 1.3;
+            font-family:var(--serif); font-size:2.6rem; font-weight:700; color:#2a2218;
+            margin-bottom:16px; letter-spacing:0.04em; line-height:1.3;
         }
-
         .page-subtitle {
-            font-family: var(--serif);
-            font-size: 1.15rem;
-            color: #6b5e4a;
-            margin-bottom: 40px;
-            letter-spacing: 0.06em;
-            font-weight: 400;
+            font-family:var(--serif); font-size:1.15rem; color:#6b5e4a; margin-bottom:40px;
+            letter-spacing:0.06em; font-weight:400;
         }
-
         .card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 32px;
-            margin-bottom: 24px;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
+            background:var(--card); border:1px solid var(--border); border-radius:8px;
+            padding:32px; margin-bottom:24px; box-shadow:var(--shadow); transition:var(--transition);
         }
+        .card:hover { box-shadow:0 4px 32px rgba(0,0,0,0.1); transform:translateY(-2px); }
+        .card-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(250px,1fr)); gap:20px; width:100%; }
+        .card img { width:100%; border-radius:6px; margin:8px 0; border:1px solid var(--border); }
+        .card figcaption { text-align:center; font-size:0.85rem; color:#8b7355; margin-top:6px; font-family:var(--serif); }
 
-        .card:hover {
-            box-shadow: 0 4px 32px rgba(0, 0, 0, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            width: 100%;
-        }
+        .image-row { display:flex; gap:16px; margin:12px 0; }
+        .image-row figure { flex:1; margin:0; }
+        .image-row img { width:100%; border-radius:6px; border:1px solid var(--border); }
 
         .btn {
-            display: inline-block;
-            padding: 12px 28px;
-            border: 1.5px solid var(--border);
-            border-radius: 6px;
-            background: var(--card);
-            color: var(--text);
-            font-family: var(--serif);
-            font-size: 1rem;
-            cursor: pointer;
-            transition: var(--transition);
-            letter-spacing: 0.04em;
-            user-select: none;
-            position: relative;
-            overflow: hidden;
+            display:inline-block; padding:12px 28px; border:1.5px solid var(--border);
+            border-radius:6px; background:var(--card); color:var(--text); font-family:var(--serif);
+            font-size:1rem; cursor:pointer; transition:var(--transition); letter-spacing:0.04em;
+            user-select:none; position:relative; overflow:hidden;
         }
-
-        .btn:hover {
-            background: #3a3226;
-            color: #f5f0e8;
-            border-color: #3a3226;
-        }
-
-        .btn.active {
-            background: #3a3226;
-            color: #f5f0e8;
-            border-color: #3a3226;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn-sm {
-            padding: 8px 18px;
-            font-size: 0.9rem;
-            letter-spacing: 0.03em;
-        }
-
-        .btn-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-            margin: 20px 0;
-        }
-
-        .svg-container {
-            width: 100%;
-            max-width: 500px;
-            margin: 30px auto;
-            display: flex;
-            justify-content: center;
-            transition: var(--transition);
-        }
-
-        svg {
-            transition: var(--transition);
-            overflow: visible;
-        }
-
-        svg .building-part {
-            transition: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
-            cursor: pointer;
-        }
-
-        svg .building-part:hover {
-            filter: brightness(1.2);
-        }
-
+        .btn:hover { background:#3a3226; color:#f5f0e8; border-color:#3a3226; }
+        .btn.active { background:#3a3226; color:#f5f0e8; border-color:#3a3226; box-shadow:0 2px 12px rgba(0,0,0,0.2); }
+        .btn-sm { padding:8px 18px; font-size:0.9rem; letter-spacing:0.03em; }
+        .btn-group { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin:20px 0; }
+        .svg-container { width:100%; max-width:500px; margin:30px auto; display:flex; justify-content:center; transition:var(--transition); }
+        svg { transition:var(--transition); overflow:visible; }
+        svg .building-part { transition:all 0.5s cubic-bezier(0.25,0.1,0.25,1); cursor:pointer; }
+        svg .building-part:hover { filter:brightness(1.2); }
         .info-panel {
-            background: rgba(58, 50, 38, 0.95);
-            color: #f5f0e8;
-            padding: 20px 28px;
-            border-radius: 8px;
-            margin: 20px 0;
-            min-height: 60px;
-            transition: var(--transition);
-            font-family: var(--serif);
-            letter-spacing: 0.03em;
-            line-height: 1.7;
-            backdrop-filter: blur(10px);
+            background:rgba(58,50,38,0.95); color:#f5f0e8; padding:20px 28px; border-radius:8px;
+            margin:20px 0; min-height:60px; transition:var(--transition); font-family:var(--serif);
+            letter-spacing:0.03em; line-height:1.7; backdrop-filter:blur(10px);
         }
-
-        .info-panel .highlight-text {
-            color: #e8c45a;
-            font-weight: 600;
-        }
-
-        .chart-container {
-            width: 100%;
-            max-width: 800px;
-            height: 400px;
-            margin: 30px auto;
-        }
-
-        .fade-in {
-            animation: fadeIn 0.8s ease forwards;
-            opacity: 0;
-        }
-
+        .info-panel .highlight-text { color:#e8c45a; font-weight:600; }
+        .chart-container { width:100%; max-width:800px; height:400px; margin:30px auto; }
+        .fade-in { animation:fadeIn 0.8s ease forwards; opacity:0; }
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity:0; transform:translateY(20px); }
+            to { opacity:1; transform:translateY(0); }
         }
-
-        .fade-in-delay-1 {
-            animation-delay: 0.2s;
-        }
-
-        .fade-in-delay-2 {
-            animation-delay: 0.4s;
-        }
-
-        .fade-in-delay-3 {
-            animation-delay: 0.6s;
-        }
-
+        .fade-in-delay-1 { animation-delay:0.2s; }
+        .fade-in-delay-2 { animation-delay:0.4s; }
+        .fade-in-delay-3 { animation-delay:0.6s; }
         .nav-dots {
-            position: fixed;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+            position:fixed; right:20px; top:50%; transform:translateY(-50%);
+            z-index:100; display:flex; flex-direction:column; gap:12px;
         }
-
         .nav-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: var(--border);
-            cursor: pointer;
-            transition: var(--transition);
+            width:10px; height:10px; border-radius:50%; background:var(--border);
+            cursor:pointer; transition:var(--transition);
         }
-
-        .nav-dot.active {
-            background: var(--accent);
-            box-shadow: 0 0 8px rgba(178, 58, 42, 0.5);
-            transform: scale(1.3);
-        }
-
-        .ink-reveal {
-            position: relative;
-            display: inline-block;
-            clip-path: inset(0 0 0 0);
-        }
-
-        .ink-reveal.ink-ready {
-            clip-path: inset(0 100% 0 0);
-            transition: clip-path 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .ink-reveal.ink-visible {
-            clip-path: inset(0 0 0 0);
-        }
-
-        .ink-quote {
-            position: relative;
-            overflow: hidden;
-        }
-
+        .nav-dot.active { background:var(--accent); box-shadow:0 0 8px rgba(178,58,42,0.5); transform:scale(1.3); }
+        .ink-reveal { position:relative; display:inline-block; clip-path:inset(0 0 0 0); }
+        .ink-reveal.ink-ready { clip-path:inset(0 100% 0 0); transition:clip-path 1.5s cubic-bezier(0.4,0,0.2,1); }
+        .ink-reveal.ink-visible { clip-path:inset(0 0 0 0); }
+        .ink-quote { position:relative; overflow:hidden; }
         .ink-quote::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #8b6914, transparent);
-            animation: inkSweep 3s ease-in-out infinite;
+            content:''; position:absolute; bottom:0; left:0; width:100%; height:2px;
+            background:linear-gradient(90deg, transparent, #8b6914, transparent);
+            animation:inkSweep 3s ease-in-out infinite;
         }
-
         @keyframes inkSweep {
-            0% {
-                transform: translateX(-100%);
-            }
-            50% {
-                transform: translateX(100%);
-            }
-            100% {
-                transform: translateX(-100%);
-            }
+            0%{transform:translateX(-100%);} 50%{transform:translateX(100%);} 100%{transform:translateX(-100%);}
         }
-
-        .divider {
-            width: 60px;
-            height: 3px;
-            background: var(--accent);
-            margin: 20px auto;
-            opacity: 0.5;
-            border-radius: 2px;
-        }
-
-        .card-highlight {
-            border-left: 4px solid var(--accent);
-        }
-
+        .divider { width:60px; height:3px; background:var(--accent); margin:20px auto; opacity:0.5; border-radius:2px; }
+        .card-highlight { border-left:4px solid var(--accent); }
         .tag {
-            display: inline-block;
-            padding: 4px 12px;
-            background: rgba(178, 58, 42, 0.08);
-            color: var(--accent);
-            border-radius: 4px;
-            font-size: 0.85rem;
-            font-family: var(--serif);
-            margin-right: 8px;
-            margin-bottom: 8px;
+            display:inline-block; padding:4px 12px; background:rgba(178,58,42,0.08); color:var(--accent);
+            border-radius:4px; font-size:0.85rem; font-family:var(--serif); margin-right:8px; margin-bottom:8px;
+        }
+
+        .model-container {
+            position:relative; border-radius:12px; overflow:hidden;
+            border:1px solid var(--border); background:#1a1815; display:flex; flex-direction:column;
+            min-height:550px; margin-top:16px;
+        }
+        .model-container #three-canvas { flex:1; width:100%; cursor:grab; }
+        .model-container #three-canvas:active { cursor:grabbing; }
+        .model-toolbar {
+            display:flex; gap:8px; padding:10px 14px; background:rgba(26,24,21,0.95);
+            border-top:1px solid rgba(212,197,169,0.15); flex-wrap:wrap; justify-content:center;
+            position:relative; z-index:5;
+        }
+        .model-toolbar .tool-btn {
+            padding:6px 14px; border:1px solid rgba(212,197,169,0.3); border-radius:4px;
+            background:transparent; color:#d4c5a9; font-family:var(--serif); font-size:0.8rem;
+            cursor:pointer; transition:all 0.3s ease; letter-spacing:0.04em; white-space:nowrap;
+        }
+        .model-toolbar .tool-btn:hover { background:rgba(178,58,42,0.2); border-color:var(--accent); color:#e8c45a; }
+        .model-toolbar .tool-btn.active { background:rgba(178,58,42,0.35); border-color:var(--accent); color:#e8c45a; }
+        .model-hint {
+            position:absolute; bottom:55px; left:50%; transform:translateX(-50%);
+            color:rgba(212,197,169,0.45); font-family:var(--serif); font-size:0.7rem;
+            pointer-events:none; z-index:10; transition:opacity 1s ease;
         }
 
         @media (max-width:1024px) {
-            .page-split {
-                flex-direction: column;
-                padding: 40px 16px;
-                gap: 20px;
-            }
-            .page-split .split-left {
-                flex: 0 0 auto;
-                max-height: none;
-                overflow-y: visible;
-                padding-right: 0;
-                padding-bottom: 20px;
-            }
-            .page-split .split-right {
-                min-height: 450px;
-                flex: 0 0 450px;
-            }
-            .page-title {
-                font-size: 1.8rem;
-            }
-            .cover-title {
-                font-size: 2.5rem;
-            }
+            .page-split { flex-direction:column; padding:40px 16px; gap:20px; }
+            .page-title { font-size:1.8rem; }
+            .cover-title { font-size:2.5rem; }
+            .image-row { flex-direction:column; }
         }
-
         @media (max-width:768px) {
-            .page-title {
-                font-size: 1.8rem;
-            }
-            .page-subtitle {
-                font-size: 1rem;
-            }
-            .page {
-                padding: 60px 16px;
-            }
-            .card {
-                padding: 20px;
-            }
-            .nav-dots {
-                right: 8px;
-                gap: 8px;
-            }
-            .nav-dot {
-                width: 8px;
-                height: 8px;
-            }
-            .chart-container {
-                height: 280px;
-            }
-            .page-split .split-right {
-                min-height: 350px;
-                flex: 0 0 350px;
-            }
-            .cover-title {
-                font-size: 2rem;
-            }
+            .page-title { font-size:1.8rem; } .page-subtitle { font-size:1rem; }
+            .page { padding:60px 16px; } .card { padding:20px; }
+            .nav-dots { right:8px; gap:8px; } .nav-dot { width:8px; height:8px; }
+            .chart-container { height:280px; }
+            .cover-title { font-size:2rem; }
+            .model-container { min-height:400px; }
         }
     </style>
 </head>
@@ -646,7 +233,7 @@
         <div class="cover-overlay"></div>
         <div class="cover-content">
             <h1 class="cover-title ink-ready" id="coverTitle">法式数诠</h1>
-            <p class="cover-subtitle" id="coverSubtitle">一部宋代建筑经典的当代传播</p>
+            <p class="cover-subtitle" id="coverSubtitle">以材份为纲，以规矩为度，以匠心为骨<br>解码宋代官式建筑的营造密码，重现大宋木构的巅峰风华</p>
         </div>
         <div class="cover-scroll-hint">向下滚动，翻开这本古籍</div>
     </section>
@@ -659,28 +246,42 @@
             <p class="page-subtitle">一场席卷北宋朝廷的工程腐败风暴，意外地催生了中国最伟大的建筑法典</p>
             <div class="card fade-in-delay-1">
                 <p style="font-family:var(--serif);font-size:1.1rem;line-height:2;">
-                    北宋中晚期，王朝的大兴土木达到巅峰。宫殿、王府、太庙、官署、城墙、河道…… 工程一个接一个上马，国库的白银像流水一样往外淌。 但没有人能说清，这些钱到底花在了哪里。
+                    北宋中晚期，王朝的大兴土木达到巅峰。宫殿、王府、太庙、官署、城墙、河道……
+                    工程一个接一个上马，国库的白银像流水一样往外淌。但没有人能说清，这些钱到底花在了哪里。
                 </p>
                 <p style="font-family:var(--serif);line-height:2;">
-                    问题出在<strong>标准</strong>上。偌大一个王朝，竟然没有一部统一的建筑规范。 工匠们各凭经验，官吏们随意定价。同样的工程，在不同的地方、由不同的人经办， 造价可以相差数倍。负责工程的官吏与工匠暗中勾结，虚报物料、夸大工时， 从朝廷的银库里源源不断地抽取着民脂民膏。
+                    问题出在<strong>标准</strong>上。偌大一个王朝，竟然没有一部统一的建筑规范。
+                    工匠们各凭经验，官吏们随意定价。同样的工程，在不同的地方、由不同的人经办，
+                    造价可以相差数倍。负责工程的官吏与工匠暗中勾结，虚报物料、夸大工时，
+                    从朝廷的银库里源源不断地抽取着民脂民膏。
                 </p>
                 <p style="font-family:var(--serif);line-height:2;">
-                    更可怕的是，<strong>没有人能戳穿这个谎言。</strong>因为没有标准—— 没有谁说得清一根梁木应该多粗，一堵墙应该多厚，一座大殿应该用多少工。 腐败，就在这片制度的真空地带里，疯狂生长，肆无忌惮。
+                    更可怕的是，<strong>没有人能戳穿这个谎言。</strong>因为没有标准——
+                    没有谁说得清一根梁木应该多粗，一堵墙应该多厚，一座大殿应该用多少工。
+                    腐败，就在这片制度的真空地带里，疯狂生长，肆无忌惮。
                 </p>
             </div>
             <div class="card card-highlight fade-in-delay-2">
                 <h3 style="font-family:var(--serif);color:var(--accent);margin-bottom:12px;font-size:1.3rem;">📜 熙宁变法的未竟之业</h3>
                 <p style="font-family:var(--serif);line-height:2;">
-                    王安石看到了这个问题。熙宁年间（1069-1085），他推行变法， 其中一项重要举措就是规范全国的工程营造标准——统一预算、统一用料、统一工时。 他要让每一文钱都花在明处，让每一根木料都有据可查。
+                    王安石看到了这个问题。熙宁年间（1069-1085），他推行变法，
+                    其中一项重要举措就是规范全国的工程营造标准——统一预算、统一用料、统一工时。
+                    他要让每一文钱都花在明处，让每一根木料都有据可查。
                 </p>
                 <p style="font-family:var(--serif);line-height:2;">
-                    然而变法触动太多人的利益。保守派的反击汹涌而至，王安石最终罢相，新法逐一被废。 但那一颗<strong>"标准化"</strong>的种子，已经深深埋入了朝廷决策者的心底。 无论政治风云如何变幻，工程腐败的顽疾必须被根治。
+                    然而变法触动太多人的利益。保守派的反击汹涌而至，王安石最终罢相，新法逐一被废。
+                    但那一颗<strong>"标准化"</strong>的种子，已经深深埋入了朝廷决策者的心底。
+                    无论政治风云如何变幻，工程腐败的顽疾必须被根治。
                 </p>
                 <p style="font-family:var(--serif);line-height:2;">
-                    命运选中的，是一个叫<strong>李诫</strong>的人。 崇宁二年（1103年），这位将作监丞——相当于今日住建部总工程师的实干家—— 在总结前人典籍和自身十余年实践经验的基础上， 奉敕编纂完成了这部空前绝后的巨著——《营造法式》。
+                    命运选中的，是一个叫<strong>李诫</strong>的人。
+                    崇宁二年（1103年），这部由将作监丞李诫奉敕编纂的巨著——《营造法式》，
+                    经宋徽宗批准正式刊行天下。
                 </p>
                 <p style="font-family:var(--serif);line-height:2;">
-                    <strong>它不是一本普通的书。</strong>它是中国历史上第一部由官方颁布的、完整的建筑技术规范。 比欧洲同类标准早了数百年。它用统一的术语、精密的模数、严格的标准， 从根本上杜绝了虚报与欺诈的可能。<strong>这是一把终结腐败的利剑，更是一座文明的丰碑。</strong>
+                    <strong>它不是一本普通的书。</strong>它是中国历史上第一部由官方颁布的、完整的建筑技术规范。
+                    比欧洲同类标准早了数百年。它用统一的术语、精密的模数、严格的标准，
+                    从根本上杜绝了虚报与欺诈的可能。<strong>这是一把终结腐败的利剑，更是一座文明的丰碑。</strong>
                 </p>
                 <div style="margin-top:16px;">
                     <span class="tag">王安石变法</span><span class="tag">工程腐败</span><span class="tag">标准化需求</span><span class="tag">世界最早</span>
@@ -703,39 +304,41 @@
             <div class="card card-highlight fade-in-delay-1">
                 <h3 style="font-family:var(--serif);color:var(--accent);margin-bottom:12px;font-size:1.2rem;">🏛️ 从官宦子弟到将作监丞</h3>
                 <p style="font-family:var(--serif);line-height:2;">
-                    <strong>李诫</strong>（1035—1110），字明仲，郑州管城人，出身官宦世家。 他的父亲李南公是朝廷重臣，哥哥李譓官至龙图阁直学士。 这样的家世，本可以让他走一条轻松的仕途——读书、应举、做官、享福。
+                    <strong>李诫</strong>（约1060—1110），字明仲，郑州管城人，出身官宦世家。
+                    他的父亲李南公是朝廷重臣，哥哥李譓官至龙图阁直学士。
+                    这样的家世，本可以让他走一条轻松的仕途——读书、应举、做官、享福。
                 </p>
                 <p style="font-family:var(--serif);line-height:2;">
-                    但他偏偏选择了一条最"接地气"的路。<strong>将作监丞</strong>——这个掌管全国工程营造的职位， 需要和木头、石头、泥土打交道，需要下工地、爬脚手架、检查每一根柱础是否规整。 在当时的官场，这不是一个"清贵"的差事。但李诫不在乎。 他在这个位置上<strong>一干就是十余年</strong>，亲自督造了五王邸、辟雍、尚书省、太庙等数十项大型工程。 这些浸满汗水的实践经验，使他不是纸上谈兵的理论家，而是一位真正"手上有泥"的工程师。
+                    但他偏偏选择了一条最"接地气"的路。<strong>将作监</strong>——这个掌管全国工程营造的机构，
+                    需要和木头、石头、泥土打交道，需要下工地、爬脚手架、检查每一根柱础是否规整。
+                    在当时的官场，这不是一个"清贵"的差事。但李诫不在乎。
+                    他在这个机构里<strong>一干就是十余年</strong>，亲自督造了五王邸、辟雍、尚书省、太庙等数十项大型工程。
+                    这些浸满汗水的实践经验，使他不是纸上谈兵的理论家，而是一位真正"手上有泥"的工程师。
                 </p>
                 <p style="font-family:var(--serif);line-height:2;">
-                    更难得的是，他不仅是工程师，还是艺术家。<strong>他擅长书法，精于丹青，著有《续山海经》《琵琶录》等。</strong> 这种文理兼修的气质，最终成就了一部既有精密技术、又有文化底蕴的千古奇书。
+                    更难得的是，他不仅是工程师，还是艺术家。<strong>他擅长书法，精于丹青，著有《续山海经》《琵琶录》等。</strong>
+                    这种文理兼修的气质，最终成就了一部既有精密技术、又有文化底蕴的千古奇书。
                 </p>
                 <span class="tag">官宦世家</span><span class="tag">将作监丞</span><span class="tag">实践经验</span><span class="tag">文理兼修</span>
             </div>
             <div class="card fade-in-delay-2">
                 <h3 style="font-family:var(--serif);color:var(--accent);margin-bottom:12px;font-size:1.2rem;">🔬 三种方法，写就一部千古奇书</h3>
                 <p style="font-family:var(--serif);line-height:2;">
-                    在那个没有CAD、没有建筑系的年代，编写一部系统的建筑规范，简直是天方夜谭。 但李诫的方法，至今读来仍令人叹服——
+                    在那个没有CAD、没有建筑系的年代，编写一部系统的建筑规范，简直是天方夜谭。
+                    但李诫的方法，至今读来仍令人叹服——
                 </p>
                 <div style="display:flex;flex-direction:column;gap:18px;margin-top:12px;">
                     <div style="border-left:3px solid var(--gold);padding-left:16px;">
                         <h4 style="font-family:var(--serif);color:var(--gold);">📚 考究经史 —— 文献查阅</h4>
-                        <p style="font-family:var(--serif);">
-                            他从《周礼·考工记》到前朝工程档案，系统查阅了大量典籍。 他要知道古人是如何规定的，历代的营造制度是如何演变的。 这种追根溯源的研究方法，放在今天就是学术论文的"文献综述"。
-                        </p>
+                        <p style="font-family:var(--serif);">他从《周礼·考工记》到前朝工程档案，系统查阅了大量典籍。他要知道古人是如何规定的，历代的营造制度是如何演变的。这种追根溯源的研究方法，放在今天就是学术论文的"文献综述"。</p>
                     </div>
                     <div style="border-left:3px solid var(--gold);padding-left:16px;">
                         <h4 style="font-family:var(--serif);color:var(--gold);">👂 询访匠人 —— 田野调查</h4>
-                        <p style="font-family:var(--serif);">
-                            他深知真正的知识藏于民间工匠之手。于是他走访各地，向那些头发花白的老匠人请教， 将世代<strong>口传心授</strong>的"不传之秘"一一记录整理。这些工匠的名字未曾载入史册， 但他们的毕生智慧，被李诫永久地保存了下来。这种田野调查的方法， 放在今天就是最前沿的人类学民族志研究。
-                        </p>
+                        <p style="font-family:var(--serif);">他深知真正的知识藏于民间工匠之手。于是他走访各地，向那些头发花白的老匠人请教，将世代<strong>口传心授</strong>的"不传之秘"一一记录整理。这些工匠的名字未曾载入史册，但他们的毕生智慧，被李诫永久地保存了下来。</p>
                     </div>
                     <div style="border-left:3px solid var(--gold);padding-left:16px;">
                         <h4 style="font-family:var(--serif);color:var(--gold);">🔧 实测验证 —— 实验精神</h4>
-                        <p style="font-family:var(--serif);">
-                            他不是简单记录，而是结合自己十余年的督造实践，逐一验证、修正每一条规范。 确保它经得起工地的检验，而不是停留在纸面上的空谈。 这种"从实践中来，到实践中去"的作风，正是现代工程学最核心的精神。
-                        </p>
+                        <p style="font-family:var(--serif);">他不是简单记录，而是结合自己十余年的督造实践，逐一验证、修正每一条规范。确保它经得起工地的检验，而不是停留在纸面上的空谈。这种"从实践中来，到实践中去"的作风，正是现代工程学最核心的精神。</p>
                     </div>
                 </div>
                 <div style="margin-top:16px;">
@@ -744,19 +347,22 @@
             </div>
             <div class="card card-highlight fade-in-delay-3" style="text-align:center;">
                 <p style="font-family:var(--serif);font-size:1.1rem;color:var(--gold);line-height:2;">
-                    <strong>公元1100年，李诫开始动笔。</strong>他把十余年的工程实践、数百位匠人的口传心授、 数十部典籍的考据成果，全部熔铸于一炉。三年之后，这部三十四卷的巨著完成。 这一年是崇宁二年，公元1103年。李诫六十八岁。
+                    <strong>绍圣四年（1097年），李诫奉旨重修《营造法式》。</strong>他把十余年的工程实践、数百位匠人的口传心授、
+                    数十部典籍的考据成果，全部熔铸于一炉。元符三年（1100年），全书完成定稿，进呈御览。
+                    崇宁二年（1103年），经宋徽宗批准，这部三十四卷的巨著正式刊行天下。
                 </p>
             </div>
             <div class="card fade-in-delay-3" style="text-align:center;padding:24px;">
                 <p style="font-family:var(--serif);font-size:0.9rem;color:var(--gold);margin-bottom:16px;">⸻ 李诫生平关键节点 ⸻</p>
                 <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;font-size:0.85rem;">
-                    <div style="text-align:center;flex:1;min-width:70px;"><div style="width:6px;height:6px;border-radius:50%;background:var(--accent);margin:0 auto 4px;"></div><strong>1035</strong><p style="font-size:0.75rem;color:#6b5e4a;">出生于<br>郑州管城</p></div>
-                    <div style="text-align:center;flex:1;min-width:70px;"><div style="width:6px;height:6px;border-radius:50%;background:var(--accent);margin:0 auto 4px;"></div><strong>约1055</strong><p style="font-size:0.75rem;color:#6b5e4a;">开始研究<br>营造之学</p></div>
-                    <div style="text-align:center;flex:1;min-width:70px;"><div style="width:6px;height:6px;border-radius:50%;background:var(--accent);margin:0 auto 4px;"></div><strong>约1075</strong><p style="font-size:0.75rem;color:#6b5e4a;">督造<br>首批工程</p></div>
-                    <div style="text-align:center;flex:1;min-width:70px;"><div style="width:6px;height:6px;border-radius:50%;background:var(--accent);margin:0 auto 4px;"></div><strong>1092</strong><p style="font-size:0.75rem;color:#6b5e4a;">出任<br>将作监丞</p></div>
-                    <div style="text-align:center;flex:1;min-width:70px;"><div style="width:6px;height:6px;border-radius:50%;background:var(--accent);margin:0 auto 4px;"></div><strong>1100</strong><p style="font-size:0.75rem;color:#6b5e4a;">开始编纂<br>营造法式</p></div>
-                    <div style="text-align:center;flex:1;min-width:70px;"><div style="width:6px;height:6px;border-radius:50%;background:var(--accent);margin:0 auto 4px;"></div><strong>1103</strong><p style="font-size:0.75rem;color:#6b5e4a;">完成<br>营造法式</p></div>
-                    <div style="text-align:center;flex:1;min-width:70px;"><div style="width:6px;height:6px;border-radius:50%;background:var(--accent);margin:0 auto 4px;"></div><strong>1110</strong><p style="font-size:0.75rem;color:#6b5e4a;">逝世于<br>虢州任上</p></div>
+                    <div style="text-align:center;flex:1;min-width:70px;"><div style="width:6px;height:6px;border-radius:50%;background:var(--accent);margin:0 auto 4px;"></div><strong>约1060</strong><p style="font-size:0.75rem;color:#6b5e4a;">出生于<br>郑州管城</p></div>
+                    <div style="text-align:center;flex:1;min-width:70px;"><div style="width:6px;height:6px;border-radius:50%;background:var(--accent);margin:0 auto 4px;"></div><strong>1085</strong><p style="font-size:0.75rem;color:#6b5e4a;">恩补入仕<br>郊社斋郎</p></div>
+                    <div style="text-align:center;flex:1;min-width:70px;"><div style="width:6px;height:6px;border-radius:50%;background:var(--accent);margin:0 auto 4px;"></div><strong>1092</strong><p style="font-size:0.75rem;color:#6b5e4a;">调任<br>将作监主簿</p></div>
+                    <div style="text-align:center;flex:1;min-width:70px;"><div style="width:6px;height:6px;border-radius:50%;background:var(--accent);margin:0 auto 4px;"></div><strong>1096</strong><p style="font-size:0.75rem;color:#6b5e4a;">升任<br>将作监丞</p></div>
+                    <div style="text-align:center;flex:1;min-width:70px;"><div style="width:6px;height:6px;border-radius:50%;background:var(--accent);margin:0 auto 4px;"></div><strong>1097</strong><p style="font-size:0.75rem;color:#6b5e4a;">奉旨重修<br>营造法式</p></div>
+                    <div style="text-align:center;flex:1;min-width:70px;"><div style="width:6px;height:6px;border-radius:50%;background:var(--accent);margin:0 auto 4px;"></div><strong>1100</strong><p style="font-size:0.75rem;color:#6b5e4a;">完成定稿<br>进呈御览</p></div>
+                    <div style="text-align:center;flex:1;min-width:70px;"><div style="width:6px;height:6px;border-radius:50%;background:var(--accent);margin:0 auto 4px;"></div><strong>1103</strong><p style="font-size:0.75rem;color:#6b5e4a;">刊行颁行<br>天下</p></div>
+                    <div style="text-align:center;flex:1;min-width:70px;"><div style="width:6px;height:6px;border-radius:50%;background:var(--accent);margin:0 auto 4px;"></div><strong>1110</strong><p style="font-size:0.75rem;color:#6b5e4a;">病逝于<br>虢州任上</p></div>
                 </div>
             </div>
         </div>
@@ -771,38 +377,28 @@
             <div class="card card-highlight fade-in-delay-1">
                 <h3 style="font-family:var(--serif);color:var(--accent);margin-bottom:16px;font-size:1.2rem;">📖 三十四卷，五层结构</h3>
                 <p style="font-family:var(--serif);line-height:2;">
-                    《营造法式》共三十四卷，分为五个层次。学者张十庆先生用"语汇-文法-释读"的概念， 精准概括了它的体系。我们可以把它想象成一部完整的<strong>建筑工程操作系统</strong>。
+                    《营造法式》共三十四卷，分为五个层次。学者张十庆先生用"语汇-文法-释读"的概念，精准概括了它的体系。我们可以把它想象成一部完整的<strong>建筑工程操作系统</strong>。
                 </p>
                 <div style="display:flex;flex-direction:column;gap:14px;margin-top:16px;">
                     <div style="border-left:3px solid var(--gold);padding-left:16px;">
                         <h4 style="font-family:var(--serif);color:var(--gold);">📚 总释（第1-2卷）—— 建筑"词典"</h4>
-                        <p style="font-family:var(--serif);">
-                            统一各时期建筑构件的名称和术语。在此之前，同一种构件在不同地方有不同的叫法， 工匠之间沟通困难，审核官员也难以核查。有了"总释"，从汴京到岭南都用同一套语言。 <strong>没有统一术语，就没有统一标准。</strong>
-                        </p>
+                        <p style="font-family:var(--serif);">统一各时期建筑构件的名称和术语。在此之前，同一种构件在不同地方有不同的叫法，工匠之间沟通困难，审核官员也难以核查。有了"总释"，从汴京到岭南都用同一套语言。<strong>没有统一术语，就没有统一标准。</strong></p>
                     </div>
                     <div style="border-left:3px solid var(--gold);padding-left:16px;">
                         <h4 style="font-family:var(--serif);color:var(--gold);">📐 制度（第3-15卷）—— 建筑"文法"</h4>
-                        <p style="font-family:var(--serif);">
-                            全书核心。详细规定了壕寨、石作、大木作、小木作、雕作、彩画作、砖作等 <strong>十三个工种</strong>的营造规范。每一个工种的每一道工序、每一个构件的尺寸和比例， 都有明文规定。<strong>这是中国乃至世界上最早的系统化建筑技术标准。</strong>
-                        </p>
+                        <p style="font-family:var(--serif);">全书核心。详细规定了壕寨、石作、大木作、小木作、雕作、彩画作、砖作等<strong>十三个工种</strong>的营造规范。每一个工种的每一道工序、每一个构件的尺寸和比例，都有明文规定。<strong>这是中国乃至世界上最早的系统化建筑技术标准。</strong></p>
                     </div>
                     <div style="border-left:3px solid var(--gold);padding-left:16px;">
                         <h4 style="font-family:var(--serif);color:var(--gold);">⏱️ 功限（第16-25卷）—— 劳动"定额"</h4>
-                        <p style="font-family:var(--serif);">
-                            明确所有工种完成工作所需的时间。比如"雕刻一平方米花草纹饰，普通工匠需要三天"。 这意味着，不管谁来施工，用工量都有据可查。<strong>制度的意义在于，它让"虚报工时"变得不可能。</strong>
-                        </p>
+                        <p style="font-family:var(--serif);">明确所有工种完成工作所需的时间。比如"雕刻一平方米花草纹饰，普通工匠需要三天"。这意味着，不管谁来施工，用工量都有据可查。<strong>制度的意义在于，它让"虚报工时"变得不可能。</strong></p>
                     </div>
                     <div style="border-left:3px solid var(--gold);padding-left:16px;">
                         <h4 style="font-family:var(--serif);color:var(--gold);">🧱 料例（第26-28卷）—— 用料"标准"</h4>
-                        <p style="font-family:var(--serif);">
-                            规定各工种的用料规格和数量。一根大梁用多少木料，一堵墙用多少砖石， 都有精确的标准。<strong>官员不能再以"多用了料"为由虚报开支。</strong>
-                        </p>
+                        <p style="font-family:var(--serif);">规定各工种的用料规格和数量。一根大梁用多少木料，一堵墙用多少砖石，都有精确的标准。<strong>官员不能再以"多用了料"为由虚报开支。</strong></p>
                     </div>
                     <div style="border-left:3px solid var(--gold);padding-left:16px;">
                         <h4 style="font-family:var(--serif);color:var(--gold);">📐 图样（第29-34卷）—— 工程"图纸"</h4>
-                        <p style="font-family:var(--serif);">
-                            六卷图示，绘制平面图、断面图等直观图示。<strong>在文字尚可篡改的年代，图纸是最难造假的证据。</strong> 这也是整部书中最受后世推崇的部分——它让标准变得"可见"。
-                        </p>
+                        <p style="font-family:var(--serif);">六卷图示，绘制平面图、断面图等直观图示。<strong>在文字尚可篡改的年代，图纸是最难造假的证据。</strong>这也是整部书中最受后世推崇的部分——它让标准变得"可见"。</p>
                     </div>
                 </div>
                 <div style="margin-top:16px;">
@@ -811,8 +407,7 @@
             </div>
             <div class="card fade-in-delay-2">
                 <p style="text-align:center;font-family:var(--serif);font-size:1.1rem;color:var(--gold);line-height:2;">
-                    从术语的统一，到施工定额的制定，再到图纸的绘制——<br> 李诫用九百年前的智慧，构建了一套<strong>可操作的、闭环的、防腐败的</strong>工程管理体系。
-                    <br> 这就是中国古代建筑标准化最大的成就。
+                    从术语的统一，到施工定额的制定，再到图纸的绘制——<br>李诫用九百年前的智慧，构建了一套<strong>可操作的、闭环的、防腐败的</strong>工程管理体系。<br>这就是中国古代建筑标准化最大的成就。
                 </p>
             </div>
         </div>
@@ -825,14 +420,14 @@
             <h2 class="page-title">核心：材份制的参数化设计</h2>
             <p class="page-subtitle">八个等级，一套模数。选择材等，建筑的万千构件便有了尺度。</p>
             <div class="card card-highlight fade-in-delay-1">
-                <h3 style="font-family:var(--serif);color:var(--accent);margin-bottom:12px;font-size:1.2rem;">🧱 什么是材份制？——古代的"参数化"系统</h3>
+                <h3 style="font-family:var(--serif);color:var(--accent);margin-bottom:12px;font-size:1.2rem;">🧱 从"各凭经验"到"有法可依"——模数制的诞生</h3>
                 <p style="font-family:var(--serif);line-height:2;">
-                    材份制的核心逻辑极为简洁：<strong>把建筑所有构件的尺寸，都变成"材"的倍数或分数。</strong> 所谓"材"，就是一种标准化的木构件断面，作为整个建筑尺寸的基本模数。
+                    在《营造法式》出现之前，工匠们各凭经验，同样的构件在不同工地尺寸各异，无法批量生产，也无法质量验收。李诫需要一套方法，让所有构件的尺寸都标准化——这就是<strong>材份制</strong>。
                 </p>
                 <p style="font-family:var(--serif);line-height:2;">
-                    柱子的标准直径是<strong>材高的2倍</strong>，斗拱每一跳出挑的长度是<strong>材高的3倍</strong>。 只要确定了"材"的等级，<strong>整座建筑的比例就自动锁定了</strong>—— 就像今天的参数化设计软件，输入核心参数，所有构件便自动生成。
+                    材份制的核心逻辑极为简洁：<strong>把建筑所有构件的尺寸，都变成"材"的倍数或分数。</strong>所谓"材"，就是一种标准化的木构件断面。柱子的直径是<strong>材高的2倍</strong>，斗拱出挑的长度是<strong>材高的3倍</strong>。只要确定了"材"的等级，<strong>整座建筑的比例就自动锁定了</strong>——就像今天的参数化设计软件，输入核心参数，所有构件便自动生成。
                 </p>
-                <span class="tag">参数化设计</span><span class="tag">模数系统</span><span class="tag">以材为祖</span>
+                <span class="tag">参数化设计</span><span class="tag">模数系统</span><span class="tag">以材为祖</span><span class="tag">标准化生产</span>
             </div>
             <div class="btn-group fade-in-delay-2" id="materialBtns"></div>
             <div class="svg-container fade-in-delay-2" id="svgBuilding">
@@ -850,7 +445,7 @@
                     <rect id="ludou5" x="274" y="202" width="20" height="16" fill="#e8c45a" stroke="#8b6914" stroke-width="1.2" />
                     <polygon id="roof" points="50,192 200,96 350,192" fill="#4a6741" stroke="#2a3a1a" stroke-width="2" class="building-part" />
                     <circle id="finial" cx="200" cy="92" r="6" fill="#e8c45a" stroke="#8b6914" stroke-width="1.2" />
-                    <text x="200" y="445" text-anchor="middle" fill="#8b7355" font-size="12" font-family="var(--serif)" id="scaleLabel">一等材 · 大殿规格</text>
+                    <text x="200" y="445" text-anchor="middle" fill="#8b7355" font-size="12" font-family="var(--serif)" id="scaleLabel">一等材 · 大殿（九至十一间）</text>
                 </svg>
             </div>
             <div class="info-panel fade-in-delay-3" id="materialInfo">
@@ -861,37 +456,90 @@
     </section>
 
     <!-- ============ 第五章：基石·铺作（斗拱）的密码 ============ -->
-    <section class="page" id="page5" style="padding:0; min-height:100vh; position:relative;">
-        <div class="page-split">
-            <div class="split-left fade-in">
-                <div class="page-number">第五章</div>
-                <h2 class="page-title" style="font-size:2rem;">基石：铺作的密码</h2>
-                <p class="page-subtitle" style="margin-bottom:20px;">宋代转角铺作，六七铺作的精粹。<br>左侧读其理，右侧观其形。</p>
-                <div class="card card-highlight" style="padding:20px;margin-bottom:16px;">
-                    <h3 style="font-family:var(--serif);color:var(--accent);margin-bottom:8px;font-size:1.1rem;">🏯 宋代转角铺作：大木作的精粹</h3>
-                    <p style="font-family:var(--serif);line-height:1.9;font-size:0.95rem;">右侧展示的这件模型，是一座<strong>宋代风格的转角铺作</strong>——即位于建筑转角柱头上的斗拱节点。它属于《营造法式》中记载的<strong>大木作制度</strong>，是整座木构建筑中最复杂、最精美的核心构件。</p>
-                    <p style="font-family:var(--serif);line-height:1.9;font-size:0.95rem;">转角铺作需要同时承托<strong>两个方向</strong>的屋檐出挑——正面与侧面在此交汇，因此其构件数量更多、咬合关系更复杂。这一件模型提取了六铺作或七铺作中<strong>最外跳的部分</strong>，呈现出如<strong>鱼形般舒展的优美轮廓</strong>。</p>
-                    <span class="tag">转角铺作</span><span class="tag">大木作制度</span><span class="tag">六七铺作</span>
-                </div>
-                <div class="card" style="padding:20px;margin-bottom:18px;">
-                    <h3 style="font-family:var(--serif);color:var(--gold);margin-bottom:8px;font-size:1rem;">📐 等级公式：铺作数 = 出跳数 + 3</h3>
-                    <p style="font-family:var(--serif);line-height:1.8;font-size:0.9rem;">《营造法式》中，铺作的等级遵循公式：<strong>铺作数 = 出跳数 + 3</strong>。其中"3"指固定存在的栌斗、耍头、衬方头。<strong>四铺作</strong>（出1跳）是最基础样式；<strong>七铺作</strong>（出4跳）则是现存宋代地面建筑的最高规格。</p>
-                    <span class="tag">出跳数+3</span><span class="tag">四至八铺作</span>
-                </div>
-                <div class="card card-highlight" style="padding:20px;margin-bottom:16px;text-align:center;">
-                    <p style="font-family:var(--serif);font-size:1rem;color:var(--gold);line-height:2;">转动右侧模型——<br>层层出跳的华栱与昂，仿佛<strong>一尾游鱼展开的鳍与尾</strong>，<br>在空间中凝固成<strong>动态的平衡</strong>。<br>这是中国古建筑独有的美学。</p>
-                </div>
+    <section class="page" id="page5">
+        <div class="page-inner fade-in">
+            <div class="page-number">第五章</div>
+            <h2 class="page-title">基石：铺作的密码</h2>
+            <p class="page-subtitle">层层出挑，四两拨千斤——斗拱是如何成为中式建筑的灵魂的</p>
+
+            <div class="card card-highlight fade-in-delay-1">
+                <h3 style="font-family:var(--serif);color:var(--accent);margin-bottom:8px;font-size:1.2rem;">🏯 什么是铺作？</h3>
+                <p style="font-family:var(--serif);line-height:2;">
+                    在《营造法式》中，斗拱的正式名称叫<strong>"铺作"</strong>——"铺"是层层铺垫，"作"是动作与结果。
+                    它位于柱子和屋顶之间，是整座木构建筑中最复杂、最精密的受力结构。
+                </p>
+                <p style="font-family:var(--serif);line-height:2;">
+                    等级公式：<strong>铺作数 = 出跳数 + 3</strong>。其中"3"指固定存在的栌斗、耍头、衬方头。
+                    <strong>四铺作</strong>（出1跳）是最基础样式；<strong>七铺作</strong>（出4跳）则是现存宋代地面建筑的最高规格。
+                </p>
+                <span class="tag">铺作=斗拱</span><span class="tag">出跳数+3</span><span class="tag">四至八铺作</span>
             </div>
-            <div class="split-right fade-in-delay-1" style="margin-top: 180px; min-height: 750px;">
-                <div id="three-canvas"></div>
-                <div class="model-hint" id="model-hint">🖱️ 拖拽旋转 · 滚轮缩放 · 右键平移</div>
-                <div class="model-toolbar">
-                    <button class="tool-btn active" data-view="all">全景</button>
-                    <button class="tool-btn" data-view="top">俯瞰</button>
-                    <button class="tool-btn" data-view="bottom">仰观</button>
-                    <button class="tool-btn" data-view="front">正视</button>
-                    <button class="tool-btn" data-view="side">侧视</button>
-                    <button class="tool-btn" data-view="auto" id="btn-auto-rotate">自动旋转：开</button>
+
+            <div class="card fade-in-delay-2">
+                <h3 style="font-family:var(--serif);color:var(--gold);margin-bottom:8px;font-size:1.1rem;">📐 结构透视：从一根柱子到层层出跳</h3>
+                <p style="font-family:var(--serif);line-height:2;">
+                    这张线框透视图清晰地展示了斗拱从下至上的组装逻辑：从一根柱子开始，逐层增加构件，
+                    最终形成一个庞大精巧的结构，承托起最上方的屋檐。它揭示了斗拱"层层铺垫、逐层出挑"的构造密码。
+                </p>
+                <div class="image-row">
+                    <figure>
+                        <img src="assets/duopuzhodougong.jpg" alt="方形斗拱线框结构示意图" />
+                        <figcaption>▲ 斗拱结构线框透视图</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="assets/sjingtu2.jpg" alt="斗拱实景照片" />
+                        <figcaption>▲ 古建筑上的斗拱实物对照</figcaption>
+                    </figure>
+                </div>
+                <p style="font-family:var(--serif);line-height:2;margin-top:12px;">
+                    这张图最直观地说明了一个核心道理：<strong>斗拱不是装饰品，而是一套精密的传力系统。</strong>
+                    每一层栱和昂的咬合，都是为了将屋顶的重量一步步传递到柱子上。
+                </p>
+            </div>
+
+            <div class="card fade-in-delay-3">
+                <h3 style="font-family:var(--serif);color:var(--gold);margin-bottom:8px;font-size:1.1rem;">📐 铺作程序：从"一铺作"到"八铺作"</h3>
+                <p style="font-family:var(--serif);line-height:2;">
+                    这张剖面示意图展示了斗拱从柱础到屋檐的逐层搭建过程。图中用文字标注了从"一铺作"到"八铺作"的层级，
+                    红色线条标注了荷载如何从屋顶通过层层斗拱传递到柱子的路径。
+                </p>
+                <div class="image-row">
+                    <figure>
+                        <img src="assets/damuzuopuzuo.jpg" alt="大木作铺作程序示意图" />
+                        <figcaption>▲ 铺作程序：红色线条展示力的传递</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="assets/sjingtu1.jpg" alt="铺作实物照片" />
+                        <figcaption>▲ 实物对照：层叠的斗拱构件</figcaption>
+                    </figure>
+                </div>
+                <p style="font-family:var(--serif);line-height:2;margin-top:12px;">
+                    铺作的层数越多（铺作数越高），出檐越深远，建筑等级也越高。这套"层层叠加、向外悬挑"的构造逻辑，
+                    在力学上是<strong>巧妙的荷载传递</strong>，在美学上是<strong>收放自如的韵律</strong>。
+                </p>
+            </div>
+
+            <div class="card card-highlight fade-in-delay-3" style="text-align:center;">
+                <h3 style="font-family:var(--serif);color:var(--accent);margin-bottom:12px;font-size:1.2rem;">🖱️ 近距离观察：宋代转角铺作3D模型</h3>
+                <p style="font-family:var(--serif);line-height:2;">
+                    下面这件模型是一座<strong>宋代风格的转角铺作</strong>，提取了六铺作或七铺作中<strong>最外跳的部分</strong>。
+                    拖拽鼠标可以旋转视角，滚动滚轮可以拉近拉远，试试从不同角度观察它的结构之美。
+                </p>
+                <p style="font-family:var(--serif);line-height:2;color:var(--gold);">
+                    层层出跳的华栱与昂，仿佛<strong>一尾游鱼展开的鳍与尾</strong>，在空间中凝固成<strong>动态的平衡</strong>。<br>
+                    这是中国古建筑独有的美学：<strong>力与美的统一。</strong>
+                </p>
+                <div class="model-container">
+                    <div id="three-canvas"></div>
+                    <div class="model-hint" id="model-hint">🖱️ 拖拽旋转 · 滚轮缩放</div>
+                    <div class="model-toolbar">
+                        <button class="tool-btn active" data-view="all">全景</button>
+                        <button class="tool-btn" data-view="top">俯瞰</button>
+                        <button class="tool-btn" data-view="bottom">仰观</button>
+                        <button class="tool-btn" data-view="front">正视</button>
+                        <button class="tool-btn" data-view="side">侧视</button>
+                        <button class="tool-btn" data-view="auto" id="btn-auto-rotate">自动旋转：开</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -904,17 +552,19 @@
             <h2 class="page-title">回响：从法典到基因</h2>
             <p class="page-subtitle">一本书如何被破译，如何影响八百年，如何成为中华建筑的基因</p>
             <div class="card card-highlight fade-in-delay-1">
-                <h3 style="font-family:var(--serif);color:var(--accent);margin-bottom:12px;font-size:1.2rem;">🔍 梁思成与佛光寺：一本古书解开千年谜题</h3>
+                <h3 style="font-family:var(--serif);color:var(--accent);margin-bottom:12px;font-size:1.2rem;">🔍 从"天书"到"显学"：一本古书的现代命运</h3>
                 <p style="font-family:var(--serif);line-height:2;">
-                    1919年，朱启钤重新发现并刊印了尘封数百年的《营造法式》。
+                    1919年，朱启钤在尘封的故纸堆中重新发现了《营造法式》，并自筹资金刊印。这本书的重见天日，震动了整个中国学术界。
                 </p>
                 <blockquote class="ink-quote" style="border-left:3px solid var(--accent);padding-left:20px;margin:16px 0;color:#6b5e4a;font-style:italic;font-family:var(--serif);">
-                    <span class="ink-reveal">这部书像一座沉睡的桥梁，</span>
-                    <span class="ink-reveal" style="transition-delay:0.45s;">一头连着宋人的营造秩序，</span>
-                    <span class="ink-reveal" style="transition-delay:0.9s;">一头连着现代中国建筑学的诞生。</span>
+                    <span class="ink-reveal">梁启超称其为"吾族文化之光宠"，</span>
+                    <span class="ink-reveal" style="transition-delay:0.45s;">国际学界更将其誉为"整个中古时期世界上最完备的建筑学专著"。</span>
                 </blockquote>
                 <p style="font-family:var(--serif);line-height:2;">
-                    但书中的术语晦涩难懂，被学界称为"天书"。真正破译密码的是<strong>梁思成</strong>。他加入中国营造学社，走遍全国190多个县，测绘了2738处古建筑。1937年，他在五台山发现了佛光寺东大殿，凭借《营造法式》中记载的唐代用材制度，准确断代其为唐大中十一年（公元857年），一举打破日本学者"中国已无唐代木构"的断言。
+                    <strong>在它诞生的宋代，</strong>工匠们有了统一的术语和标准，朝廷有了核查工程造价的依据，腐败的温床被釜底抽薪。<strong>在元明清三代，</strong>它的模数思想被继承、被改编，成为官式建筑的不二法度。从晋祠圣母殿的副阶周匝，到独乐寺观音阁的用材制度，再到紫禁城的万千殿宇——处处都有《营造法式》的影子。
+                </p>
+                <p style="font-family:var(--serif);line-height:2;">
+                    然而书中的术语晦涩难懂，被学界称为"天书"。真正破译密码的是<strong>梁思成</strong>。他加入中国营造学社，走遍全国190多个县，测绘了2738处古建筑。1937年，他在五台山发现了佛光寺东大殿，凭借《营造法式》中记载的唐代用材制度，准确断代其为唐大中十一年（公元857年），一举打破日本学者"中国已无唐代木构"的断言。
                 </p>
                 <p style="font-family:var(--serif);line-height:2;">
                     一本九百年前的技术手册，成为现代学者解锁中国古代建筑密码的<strong>钥匙</strong>。没有它，中国古建筑研究将是一片黑暗。
@@ -928,7 +578,7 @@
                 <div class="card"><h3 style="font-family:var(--serif);color:var(--accent);">🏰 北京故宫</h3><span class="tag">模数思想的延续</span><p style="margin-top:8px;">明清皇家宫殿，其模数化思想正是《营造法式》所确立的标准化体系的直接延续。</p></div>
             </div>
             <div class="card fade-in-delay-3" style="background:linear-gradient(135deg,#faf7f2 0%,#f0e8d8 100%);">
-                <p style="text-align:center;font-family:var(--serif);font-size:1.5rem;color:var(--accent);">致敬李诫<br><span style="font-size:1rem;color:#6b5e4a;">1035 — 1110</span></p>
+                <p style="text-align:center;font-family:var(--serif);font-size:1.5rem;color:var(--accent);">致敬李诫<br><span style="font-size:1rem;color:#6b5e4a;">约1060 — 1110</span></p>
                 <p style="text-align:center;font-family:var(--serif);margin-top:16px;color:#6b5e4a;">将作监丞，以法式立规矩<br>千载营造，为后世定准绳</p>
             </div>
             <div class="card card-highlight fade-in-delay-3">
@@ -952,64 +602,37 @@
     <script>
         const materialsData = {
             materials: [
-                { grade: '一等材', height: 9, width: 6, zhi: 3.6, usage: '大殿（九至十一间）',
-                example: '柱径 = 材高×2 = 18寸 ≈ 54厘米' },
-                { grade: '二等材', height: 8.25, width: 5.5, zhi: 3.3, usage: '大殿（五至七间）',
-                    example: '柱径 = 材高×2 = 16.5寸 ≈ 49.5厘米' },
-                { grade: '三等材', height: 7.5, width: 5, zhi: 3, usage: '大殿（三至五间）或厅堂（七间）',
-                    example: '柱径 = 材高×2 = 15寸 ≈ 45厘米' },
-                { grade: '四等材', height: 7.2, width: 4.8, zhi: 2.88, usage: '大殿（三间）或厅堂（五间）',
-                    example: '柱径 = 材高×2 = 14.4寸 ≈ 43.2厘米' },
-                { grade: '五等材', height: 6.6, width: 4.4, zhi: 2.64, usage: '小殿（三间）或厅堂（大三间）',
-                    example: '柱径 = 材高×2 = 13.2寸 ≈ 39.6厘米' },
-                { grade: '六等材', height: 6, width: 4, zhi: 2.4, usage: '亭榭或小厅堂',
-                example: '柱径 = 材高×2 = 12寸 ≈ 36厘米' },
-                { grade: '七等材', height: 5.25, width: 3.5, zhi: 2.1, usage: '小殿或亭榭',
-                    example: '柱径 = 材高×2 = 10.5寸 ≈ 31.5厘米' },
-                { grade: '八等材', height: 4.5, width: 3, zhi: 1.8, usage: '藻井或小亭榭',
-                    example: '柱径 = 材高×2 = 9寸 ≈ 27厘米' }
+                { grade: '一等材', height: 9, width: 6, zhi: 3.6, usage: '大殿（九至十一间）', example: '柱径 = 材高×2 = 18寸 ≈ 54厘米' },
+                { grade: '二等材', height: 8.25, width: 5.5, zhi: 3.3, usage: '大殿（五至七间）', example: '柱径 = 材高×2 = 16.5寸 ≈ 49.5厘米' },
+                { grade: '三等材', height: 7.5, width: 5, zhi: 3, usage: '大殿（三至五间）或厅堂（七间）', example: '柱径 = 材高×2 = 15寸 ≈ 45厘米' },
+                { grade: '四等材', height: 7.2, width: 4.8, zhi: 2.88, usage: '大殿（三间）或厅堂（五间）', example: '柱径 = 材高×2 = 14.4寸 ≈ 43.2厘米' },
+                { grade: '五等材', height: 6.6, width: 4.4, zhi: 2.64, usage: '小殿（三间）或厅堂（大三间）', example: '柱径 = 材高×2 = 13.2寸 ≈ 39.6厘米' },
+                { grade: '六等材', height: 6, width: 4, zhi: 2.4, usage: '亭榭或小厅堂', example: '柱径 = 材高×2 = 12寸 ≈ 36厘米' },
+                { grade: '七等材', height: 5.25, width: 3.5, zhi: 2.1, usage: '小殿或亭榭', example: '柱径 = 材高×2 = 10.5寸 ≈ 31.5厘米' },
+                { grade: '八等材', height: 4.5, width: 3, zhi: 1.8, usage: '藻井或小亭榭', example: '柱径 = 材高×2 = 9寸 ≈ 27厘米' }
             ]
         };
 
-        // 导航系统
         const allPages = document.querySelectorAll('.page, .cover-page');
         const navDots = document.querySelectorAll('.nav-dot');
-
-        function updateNavDots(i) {
-            navDots.forEach((d, j) => d.classList.toggle('active', j === i));
-        }
-
+        function updateNavDots(i) { navDots.forEach((d, j) => d.classList.toggle('active', j === i)); }
         const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const i = Array.from(allPages).indexOf(entry.target);
-                    if (i >= 0) updateNavDots(i);
-                }
-            });
+            entries.forEach(entry => { if (entry.isIntersecting) { const i = Array.from(allPages).indexOf(entry.target); if (i >= 0) updateNavDots(i); } });
         }, { threshold: 0.2, rootMargin: '0px 0px 80px 0px' });
-
         allPages.forEach(page => observer.observe(page));
-        navDots.forEach((d, i) => {
-            d.addEventListener('click', () => {
-                allPages[i].scrollIntoView({ behavior: 'smooth' });
-            });
-        });
+        navDots.forEach((d, i) => { d.addEventListener('click', () => { allPages[i].scrollIntoView({ behavior: 'smooth' }); }); });
 
-        // 材等选择器
         const materialBtnsContainer = document.getElementById('materialBtns');
         const materialInfo = document.getElementById('materialInfo');
         const scaleLabel = document.getElementById('scaleLabel');
-
         materialsData.materials.forEach((mat, index) => {
             const btn = document.createElement('button');
             btn.className = 'btn btn-sm material-btn';
             if (index === 0) btn.classList.add('active');
-            btn.textContent = mat.grade;
-            btn.dataset.index = index;
+            btn.textContent = mat.grade; btn.dataset.index = index;
             btn.addEventListener('click', () => handleMaterialSelect(index));
             materialBtnsContainer.appendChild(btn);
         });
-
         function handleMaterialSelect(index) {
             const mat = materialsData.materials[index];
             document.querySelectorAll('.material-btn').forEach(b => b.classList.remove('active'));
@@ -1025,267 +648,99 @@
                     <p style="font-size:0.8rem;opacity:0.7;">斗拱出跳 = 材高×3 ≈ ${(mat.height * 3).toFixed(1)}寸</p>
                 </div>`;
         }
-
         function updateBuildingScale(factor) {
             const svgCenterX = 200;
             const base = {
                 platform: { x: 40, y: 400, w: 320, h: 24 },
-                cols: [
-                    { x: 110, y: 250, w: 18, h: 150 },
-                    { x: 191, y: 250, w: 18, h: 150 },
-                    { x: 272, y: 250, w: 18, h: 150 }
-                ],
-                beam: { x: 100, y: 242, w: 200, h: 12 },
-                dougong: { x: 96, y: 192, w: 208, h: 50 },
-                ludou: [
-                    { x: 106, y: 202, w: 20, h: 16 },
-                    { x: 140, y: 202, w: 20, h: 16 },
-                    { x: 190, y: 202, w: 20, h: 16 },
-                    { x: 240, y: 202, w: 20, h: 16 },
-                    { x: 274, y: 202, w: 20, h: 16 }
-                ],
-                roof: { left: 40, right: 360, peakY: 96 },
-                finial: { cx: 200, cy: 92, r: 6 }
+                cols: [{ x: 110, y: 250, w: 18, h: 150 }, { x: 191, y: 250, w: 18, h: 150 }, { x: 272, y: 250, w: 18, h: 150 }],
+                beam: { x: 100, y: 242, w: 200, h: 12 }, dougong: { x: 96, y: 192, w: 208, h: 50 },
+                ludou: [{ x: 106, y: 202, w: 20, h: 16 }, { x: 140, y: 202, w: 20, h: 16 }, { x: 190, y: 202, w: 20, h: 16 }, { x: 240, y: 202, w: 20, h: 16 }, { x: 274, y: 202, w: 20, h: 16 }],
+                roof: { left: 40, right: 360, peakY: 96 }, finial: { cx: 200, cy: 92, r: 6 }
             };
-
-            const scaleCenterX = (x, w) => svgCenterX + ((x + w / 2) - svgCenterX) * factor - (w * factor) / 2;
-            const scaleWidth = w => w * factor;
-            const scaleHeight = h => h * factor;
-
-            // 台基
+            const scx = (x, w) => svgCenterX + ((x + w / 2) - svgCenterX) * factor - (w * factor) / 2;
+            const sw = w => w * factor; const sh = h => h * factor;
             const platform = document.getElementById('platform');
-            const platformW = scaleWidth(base.platform.w);
-            const platformH = scaleHeight(base.platform.h);
-            platform.setAttribute('x', svgCenterX - platformW / 2);
-            platform.setAttribute('y', base.platform.y);
-            platform.setAttribute('width', platformW);
-            platform.setAttribute('height', platformH);
-
-            // 柱子
-            const colH = scaleHeight(base.cols[0].h);
-            const colW = scaleWidth(base.cols[0].w);
-            const colTop = base.platform.y - colH;
-            ['col1', 'col2', 'col3'].forEach((id, i) => {
-                const rect = document.getElementById(id);
-                rect.setAttribute('x', scaleCenterX(base.cols[i].x, base.cols[i].w));
-                rect.setAttribute('y', colTop);
-                rect.setAttribute('width', colW);
-                rect.setAttribute('height', colH);
-            });
-
-            // 阑额
-            const beam = document.getElementById('beam');
-            const beamW = scaleWidth(base.beam.w);
-            const beamH = Math.max(6, scaleHeight(base.beam.h));
-            const beamY = colTop - 2;
-            beam.setAttribute('x', svgCenterX - beamW / 2);
-            beam.setAttribute('y', beamY);
-            beam.setAttribute('width', beamW);
-            beam.setAttribute('height', beamH);
-
-            // 斗拱层
-            const dougongBase = document.getElementById('dougongBase');
-            const dougongW = scaleWidth(base.dougong.w);
-            const dougongH = Math.max(10, scaleHeight(base.dougong.h));
-            const dougongY = beamY - dougongH;
-            dougongBase.setAttribute('x', svgCenterX - dougongW / 2);
-            dougongBase.setAttribute('y', dougongY);
-            dougongBase.setAttribute('width', dougongW);
-            dougongBase.setAttribute('height', dougongH);
-
-            // 栌斗
-            const ludouW = Math.max(6, scaleWidth(base.ludou[0].w));
-            const ludouH = Math.max(4, scaleHeight(base.ludou[0].h));
-            base.ludou.forEach((item, idx) => {
-                const el = document.getElementById(`ludou${idx + 1}`);
-                if (!el) return;
-                el.setAttribute('x', scaleCenterX(item.x, item.w));
-                el.setAttribute('y', dougongY + dougongH * 0.25);
-                el.setAttribute('width', ludouW);
-                el.setAttribute('height', ludouH);
-            });
-
-            // 屋顶
-            const roof = document.getElementById('roof');
-            const roofLeft = svgCenterX + (base.roof.left - svgCenterX) * factor;
-            const roofRight = svgCenterX + (base.roof.right - svgCenterX) * factor;
-            const roofBaseY = dougongY;
-            const roofPeakY = roofBaseY - 96 * factor;
-            roof.setAttribute('points', `${roofLeft},${roofBaseY} ${svgCenterX},${roofPeakY} ${roofRight},${roofBaseY}`);
-
-            // 屋脊装饰
-            const finial = document.getElementById('finial');
-            finial.setAttribute('cx', svgCenterX);
-            finial.setAttribute('cy', roofPeakY + 4);
-            finial.setAttribute('r', Math.max(3, base.finial.r * factor));
+            const pW = sw(base.platform.w); const pH = sh(base.platform.h);
+            platform.setAttribute('x', svgCenterX - pW / 2); platform.setAttribute('y', base.platform.y); platform.setAttribute('width', pW); platform.setAttribute('height', pH);
+            const colH = sh(base.cols[0].h); const colW = sw(base.cols[0].w); const colTop = base.platform.y - colH;
+            ['col1', 'col2', 'col3'].forEach((id, i) => { const r = document.getElementById(id); r.setAttribute('x', scx(base.cols[i].x, base.cols[i].w)); r.setAttribute('y', colTop); r.setAttribute('width', colW); r.setAttribute('height', colH); });
+            const beam = document.getElementById('beam'); const bW = sw(base.beam.w); const bH = Math.max(6, sh(base.beam.h)); const bY = colTop - 2;
+            beam.setAttribute('x', svgCenterX - bW / 2); beam.setAttribute('y', bY); beam.setAttribute('width', bW); beam.setAttribute('height', bH);
+            const db = document.getElementById('dougongBase'); const dW = sw(base.dougong.w); const dH = Math.max(10, sh(base.dougong.h)); const dY = bY - dH;
+            db.setAttribute('x', svgCenterX - dW / 2); db.setAttribute('y', dY); db.setAttribute('width', dW); db.setAttribute('height', dH);
+            const lW = Math.max(6, sw(base.ludou[0].w)); const lH = Math.max(4, sh(base.ludou[0].h));
+            base.ludou.forEach((item, idx) => { const el = document.getElementById(`ludou${idx + 1}`); if (!el) return; el.setAttribute('x', scx(item.x, item.w)); el.setAttribute('y', dY + dH * 0.25); el.setAttribute('width', lW); el.setAttribute('height', lH); });
+            const roof = document.getElementById('roof'); const rL = svgCenterX + (base.roof.left - svgCenterX) * factor; const rR = svgCenterX + (base.roof.right - svgCenterX) * factor; const rBY = dY; const rPY = rBY - 96 * factor;
+            roof.setAttribute('points', `${rL},${rBY} ${svgCenterX},${rPY} ${rR},${rBY}`);
+            const finial = document.getElementById('finial'); finial.setAttribute('cx', svgCenterX); finial.setAttribute('cy', rPY + 4); finial.setAttribute('r', Math.max(3, base.finial.r * factor));
         }
 
-        // ECharts
         function initInfluenceChart() {
-            const c = document.getElementById('influenceChart');
-            if (!c) return;
+            const c = document.getElementById('influenceChart'); if (!c) return;
             const ch = echarts.init(c);
             ch.setOption({
                 backgroundColor: 'transparent',
-                tooltip: { trigger: 'item', backgroundColor: 'rgba(58,50,38,0.9)',
-                borderColor: '#d4c5a9', textStyle: { color: '#f5f0e8' } },
+                tooltip: { trigger: 'item', backgroundColor: 'rgba(58,50,38,0.9)', borderColor: '#d4c5a9', textStyle: { color: '#f5f0e8' } },
                 grid: { left: '5%', right: '5%', top: '15%', bottom: '15%' },
-                xAxis: {
-                    type: 'category',
-                    data: ['晋祠圣母殿\n1023-1032', '独乐寺观音阁\n984年重建', '北京故宫\n1406-1420'],
-                    axisLabel: { color: '#6b5e4a', fontSize: 11, formatter: v => v.split('\n')[0] }
-                },
-                yAxis: { type: 'value', name: '影响力指数', max: 100, splitLine: { lineStyle: { color: '#e8dcc8',
-                            type: 'dashed' } } },
-                series: [{
-                    type: 'bar',
-                    data: [85, 78, 95],
-                    itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0,
-                            color: '#b23a2a' }, { offset: 1, color: '#e8c45a' }]), borderRadius: [6,
-                            6, 0, 0
-                        ] },
-                    label: { show: true, position: 'top', color: '#3a3226', fontWeight: 'bold' },
-                    barWidth: '45%'
-                }],
-                graphic: [{ type: 'text', left: 'center', top: '2%', style: { text: '《营造法式》影响指数',
-                        fill: '#3a3226', font: 'bold 16px "var(--serif)"' } }]
+                xAxis: { type: 'category', data: ['晋祠圣母殿\n"副阶周匝"吻合', '独乐寺观音阁\n用材比例吻合', '北京故宫\n模数体系延续'], axisLabel: { color: '#6b5e4a', fontSize: 11, formatter: v => v.split('\n')[0] } },
+                yAxis: { type: 'value', name: '法式技术匹配度', max: 100, splitLine: { lineStyle: { color: '#e8dcc8', type: 'dashed' } } },
+                series: [{ type: 'bar', data: [92, 88, 85], itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#b23a2a' }, { offset: 1, color: '#e8c45a' }]), borderRadius: [6, 6, 0, 0] }, label: { show: true, position: 'top', color: '#3a3226', fontWeight: 'bold' }, barWidth: '45%' }],
+                graphic: [{ type: 'text', left: 'center', top: '2%', style: { text: '《营造法式》技术匹配度分析', fill: '#3a3226', font: 'bold 16px "var(--serif)"' } }]
             });
             window.addEventListener('resize', () => ch.resize());
         }
 
-        // 粒子流：仅在第六章进入视口后触发
         let particleFlowStarted = false;
-
         function startParticleFlowOnce() {
             if (particleFlowStarted) return;
             particleFlowStarted = true;
-
-            const canvas = document.getElementById('particleCanvas');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            canvas.style.opacity = '0.8';
-
-            const resizeCanvas = () => {
-                canvas.width = canvas.parentElement.offsetWidth;
-                canvas.height = 120;
-            };
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
-
-            const particles = Array.from({ length: 60 }, () => ({
-                x: Math.random() * canvas.width,
-                y: canvas.height / 2 + (Math.random() - 0.5) * 60,
-                size: Math.random() * 2.5 + 1,
-                speed: Math.random() * 1.5 + 0.5,
-                opacity: Math.random() * 0.6 + 0.3,
-                golden: Math.random() > 0.3
-            }));
-
-            function animate() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.strokeStyle = 'rgba(212,197,169,0.3)';
-                ctx.setLineDash([4, 12]);
-                ctx.beginPath();
-                ctx.moveTo(0, canvas.height / 2);
-                ctx.lineTo(canvas.width, canvas.height / 2);
-                ctx.stroke();
-                ctx.setLineDash([]);
-
-                particles.forEach(p => {
-                    p.x += p.speed;
-                    if (p.x > canvas.width + 20) {
-                        p.x = -20;
-                        p.y = canvas.height / 2 + (Math.random() - 0.5) * 60;
-                    }
-                    p.opacity = Math.max(0.1, Math.min(0.8, p.opacity + (Math.random() - 0.5) * 0.02));
-
+            const canvas = document.getElementById('particleCanvas'); if (!canvas) return;
+            const ctx = canvas.getContext('2d'); canvas.style.opacity = '0.8';
+            const rc = () => { canvas.width = canvas.parentElement.offsetWidth; canvas.height = 120; }; rc(); window.addEventListener('resize', rc);
+            const particles = Array.from({ length: 60 }, () => ({ x: Math.random() * canvas.width, y: canvas.height / 2 + (Math.random() - 0.5) * 60, size: Math.random() * 2.5 + 1, speed: Math.random() * 1.5 + 0.5, opacity: Math.random() * 0.6 + 0.3, golden: Math.random() > 0.3 }));
+            function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.strokeStyle = 'rgba(212,197,169,0.3)'; ctx.setLineDash([4, 12]); ctx.beginPath(); ctx.moveTo(0, canvas.height / 2); ctx.lineTo(canvas.width, canvas.height / 2); ctx.stroke(); ctx.setLineDash([]); particles.forEach(p => { p.x += p.speed; if (p.x > canvas.width + 20) { p.x = -20;
+                        p.y = canvas.height / 2 + (Math.random() - 0.5) * 60; } p.opacity = Math.max(0.1, Math.min(0.8, p.opacity + (Math.random() - 0.5) * 0.02));
                     ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                    ctx.fillStyle = p.golden ? `rgba(232,196,90,${p.opacity})` :
-                        `rgba(178,58,42,${p.opacity*0.6})`;
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fillStyle = p.golden ? `rgba(232,196,90,${p.opacity})` : `rgba(178,58,42,${p.opacity*0.6})`;
                     ctx.fill();
-
                     ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.size * 2.5, 0, Math.PI * 2);
-                    ctx.fillStyle = p.golden ? `rgba(232,196,90,${p.opacity*0.15})` :
-                        `rgba(178,58,42,${p.opacity*0.1})`;
-                    ctx.fill();
-                });
-
-                requestAnimationFrame(animate);
-            }
+                    ctx.arc(p.x, p.y, p.size * 2.5, 0, Math.PI * 2); ctx.fillStyle = p.golden ? `rgba(232,196,90,${p.opacity*0.15})` : `rgba(178,58,42,${p.opacity*0.1})`;
+                    ctx.fill(); });
+                requestAnimationFrame(animate); }
             animate();
         }
 
-        // 第六章进入视口后才触发墨迹/流光效果
         function initInkReveal() {
-            const page6 = document.getElementById('page6');
-            if (!page6) return;
-
-            const els = page6.querySelectorAll('.ink-reveal');
-            let triggered = false;
-
-            const obs = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting && !triggered) {
-                        triggered = true;
+            const page6 = document.getElementById('page6'); if (!page6) return;
+            const els = page6.querySelectorAll('.ink-reveal'); let triggered = false;
+            const obs = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting && !triggered) { triggered = true;
                         els.forEach(el => el.classList.add('ink-ready'));
-                        requestAnimationFrame(() => {
-                            els.forEach((el, idx) => {
-                                setTimeout(() => el.classList.add('ink-visible'), idx * 120);
-                            });
-                        });
-                        startParticleFlowOnce();
-                    }
-                });
-            }, { threshold: 0.35 });
-
+                        requestAnimationFrame(() => { els.forEach((el, idx) => { setTimeout(() => el.classList.add('ink-visible'), idx * 120); }); });
+                        startParticleFlowOnce(); } }); }, { threshold: 0.35 });
             obs.observe(page6);
         }
 
-        // 封面标题动画
         function initCoverAnimation() {
-            const coverTitle = document.getElementById('coverTitle');
-            const coverSubtitle = document.getElementById('coverSubtitle');
-            if (!coverTitle) return;
-            coverTitle.classList.add('ink-ready');
-            setTimeout(() => {
-                coverTitle.classList.add('ink-visible');
-                if (coverSubtitle) coverSubtitle.classList.add('visible');
-            }, 500);
+            const ct = document.getElementById('coverTitle'); const cs = document.getElementById('coverSubtitle');
+            if (!ct) return;
+            ct.classList.add('ink-ready');
+            setTimeout(() => { ct.classList.add('ink-visible'); if (cs) cs.classList.add('visible'); }, 500);
         }
 
-        // 淡入元素
-        const fadeObs = new IntersectionObserver((entries) => {
-            entries.forEach(e => {
-                if (e.isIntersecting) {
-                    e.target.style.opacity = '1';
-                    e.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, { threshold: 0.2 });
-        document.querySelectorAll('.fade-in').forEach(el => {
-            el.style.opacity = '0';
+        const fadeObs = new IntersectionObserver((entries) => { entries.forEach(e => { if (e.isIntersecting) { e.target.style.opacity = '1';
+                    e.target.style.transform = 'translateY(0)'; } }); }, { threshold: 0.2 });
+        document.querySelectorAll('.fade-in').forEach(el => { el.style.opacity = '0';
             el.style.transform = 'translateY(20px)';
             el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-            fadeObs.observe(el);
-        });
+            fadeObs.observe(el); });
 
-        document.addEventListener('DOMContentLoaded', () => {
-            initInfluenceChart();
+        document.addEventListener('DOMContentLoaded', () => { initInfluenceChart();
             initInkReveal();
             initCoverAnimation();
-            handleMaterialSelect(0);
-
-            if (window.initThreeJS) {
-                window.initThreeJS();
-            } else {
-                window.addEventListener('load', () => window.initThreeJS && window.initThreeJS());
-            }
-        });
+            handleMaterialSelect(0); if (window.initThreeJS) { window.initThreeJS(); } else { window.addEventListener('load', () => window.initThreeJS && window.initThreeJS()); } });
     </script>
 
-    <script type="module">
+   <script type="module">
         import * as THREE from 'three';
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
         import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
@@ -1294,79 +749,64 @@
             const container = document.getElementById('three-canvas');
             if (!container) return;
 
+            // --- 基础场景设置 ---
             const scene = new THREE.Scene();
             scene.background = new THREE.Color('#1a1815');
-            scene.fog = new THREE.Fog('#1a1815', 8, 40);
+            scene.fog = new THREE.Fog('#1a1815', 5, 50);
 
-            const camera = new THREE.PerspectiveCamera(42, container.clientWidth / container.clientHeight, 0.1, 100);
-            camera.position.set(3.5, 2.5, 7.5);
-
+            const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
             const renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             renderer.setSize(container.clientWidth, container.clientHeight);
             renderer.outputColorSpace = THREE.SRGBColorSpace;
             renderer.toneMapping = THREE.ACESFilmicToneMapping;
-            renderer.toneMappingExposure = 1.15;
             renderer.shadowMap.enabled = true;
             container.appendChild(renderer.domElement);
 
             const controls = new OrbitControls(camera, renderer.domElement);
             controls.enableDamping = true;
-            controls.dampingFactor = 0.08;
             controls.autoRotate = true;
-            controls.autoRotateSpeed = 0.6;
-            controls.target.set(0, 0.15, 0);
-            controls.minDistance = 2.5;
-            controls.maxDistance = 14;
-            controls.maxPolarAngle = Math.PI * 0.72;
-            controls.update();
 
-            scene.add(new THREE.AmbientLight('#fff5e8', 0.7));
-
-            const keyLight = new THREE.DirectionalLight('#ffffff', 2.2);
-            keyLight.position.set(8, 10, 6);
+            // --- 灯光 ---
+            scene.add(new THREE.AmbientLight('#fff5e8', 0.8));
+            const keyLight = new THREE.DirectionalLight('#ffffff', 2.0);
+            keyLight.position.set(5, 10, 7);
             keyLight.castShadow = true;
-            keyLight.shadow.mapSize.set(1024, 1024);
-            keyLight.shadow.camera.near = 0.3;
-            keyLight.shadow.camera.far = 50;
             scene.add(keyLight);
-
-            const fillLight = new THREE.DirectionalLight('#d4c5a9', 0.7);
-            fillLight.position.set(-4, 2, -3);
-            scene.add(fillLight);
-
-            const rimLight = new THREE.DirectionalLight('#e8c45a', 0.9);
-            rimLight.position.set(0, 1, -5);
-            scene.add(rimLight);
-
-            const pedestalGeo = new THREE.CylinderGeometry(1.0, 1.15, 0.18, 48);
-            const pedestalMat = new THREE.MeshStandardMaterial({ color: '#3a3226', roughness: 0.5,
-                metalness: 0.25 });
-            const pedestal = new THREE.Mesh(pedestalGeo, pedestalMat);
-            pedestal.position.y = -1.5;
-            pedestal.castShadow = true;
+            
+            // --- 底座 ---
+            const pedestal = new THREE.Mesh(
+                new THREE.CylinderGeometry(1.2, 1.3, 0.2, 48),
+                new THREE.MeshStandardMaterial({ color: '#2a2218', roughness: 0.8 })
+            );
+            pedestal.position.y = -1.25; // 略低于原点
             pedestal.receiveShadow = true;
             scene.add(pedestal);
 
-            const gridHelper = new THREE.PolarGridHelper(4.5, 32, 20, 128, '#2a2218', '#2a2218');
-            gridHelper.position.y = -1.65;
-            scene.add(gridHelper);
-
+            // --- 模型加载与自动适配 ---
             const loader = new GLTFLoader();
             let model = null;
-            const modelHint = document.getElementById('model-hint');
+            let modelDistance = 5; // 动态计算的相机距离
 
             loader.load('./models/scene.gltf', (gltf) => {
                 model = gltf.scene;
+
+                // 1. 计算包围盒
                 const box = new THREE.Box3().setFromObject(model);
                 const size = box.getSize(new THREE.Vector3());
                 const center = box.getCenter(new THREE.Vector3());
+
+                // 2. 统一缩放：将模型最大维数缩放到 2.5 个单位左右
                 const maxDim = Math.max(size.x, size.y, size.z);
-                const targetScale = 3.2 / maxDim;
-                model.scale.setScalar(targetScale);
-                const scaledMinY = (box.min.y - center.y) * targetScale;
-                const pedestalTopY = 1.32;
-                model.position.set(-center.x * targetScale, -scaledMinY + pedestalTopY, -center.z * targetScale);
+                const scale = 2.5 / maxDim;
+                model.scale.setScalar(scale);
+
+                // 3. 重新计算对齐后的位置
+                // 目标：让模型的几何中心在 X,Z 轴归零，底部在 Y= -1 (底座表面)
+                model.position.x = -center.x * scale;
+                model.position.y = -box.min.y * scale +0.35; 
+                model.position.z = -center.z * scale;
+
                 model.traverse(child => {
                     if (child.isMesh) {
                         child.castShadow = true;
@@ -1374,44 +814,60 @@
                     }
                 });
                 scene.add(model);
-                controls.target.set(0, 0.1, 0);
+
+                // 4. 自动定位相机
+                modelDistance = maxDim * scale * 2.0; // 根据大小计算合适距离
+                camera.position.set(modelDistance, modelDistance * 0.5, modelDistance);
+                controls.target.set(0, 0, 0);
                 controls.update();
-                gsap.from(camera.position, { z: 12, duration: 2.5, ease: 'power3.out' });
-                if (modelHint) setTimeout(() => { modelHint.style.opacity = '0'; }, 6000);
-                console.log('✅ 3D模型加载完成');
+
+                // 入场动画
+                gsap.from(camera.position, {
+                    x: modelDistance * 2,
+                    y: modelDistance,
+                    z: modelDistance * 2,
+                    duration: 2,
+                    ease: "power2.out"
+                });
+
+                console.log('✅ 模型已自动对焦并居中');
             }, undefined, (error) => {
-                console.warn('模型加载失败', error);
-                if (modelHint) modelHint.textContent = '模型加载中...';
+                console.error('❌ 模型加载失败:', error);
             });
 
+            // --- 视图切换逻辑 ---
             const viewBtns = document.querySelectorAll('.tool-btn[data-view]');
             const autoBtn = document.getElementById('btn-auto-rotate');
-            const views = {
-                all: { pos: [3.5, 2.5, 7.5], target: [0, 0.15, 0] },
-                top: { pos: [0, 9, 0.8], target: [0, 0, 0] },
-                bottom: { pos: [0, -5, 3.5], target: [0, -0.2, 0] },
-                front: { pos: [0, 0.8, 7], target: [0, 0.15, 0] },
-                side: { pos: [7, 0.4, 0], target: [0, 0.15, 0] },
-                auto: null
-            };
 
             viewBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
                     const v = btn.dataset.view;
                     viewBtns.forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
+
                     if (v === 'auto') {
                         controls.autoRotate = !controls.autoRotate;
                         autoBtn.textContent = `自动旋转：${controls.autoRotate ? '开' : '关'}`;
                         return;
                     }
-                    const vp = views[v];
-                    if (vp) {
-                        gsap.to(camera.position, { x: vp.pos[0], y: vp.pos[1], z: vp.pos[2],
-                            duration: 1.8, ease: 'power2.inOut' });
-                        gsap.to(controls.target, { x: vp.target[0], y: vp.target[1], z: vp.target[2],
-                            duration: 1.8, ease: 'power2.inOut' });
+
+                    // 根据计算好的 modelDistance 动态调整位置
+                    const dist = modelDistance || 5;
+                    let targetPos = { x: dist, y: dist * 0.5, z: dist }; // Default
+
+                    switch(v) {
+                        case 'top':    targetPos = { x: 0, y: dist * 1.5, z: 0.1 }; break;
+                        case 'bottom': targetPos = { x: 0, y: -dist, z: dist * 0.5 }; break;
+                        case 'front':  targetPos = { x: 0, y: 0, z: dist * 1.2 }; break;
+                        case 'side':   targetPos = { x: dist * 1.2, y: 0, z: 0 }; break;
                     }
+
+                    gsap.to(camera.position, {
+                        ...targetPos,
+                        duration: 1.2,
+                        ease: "power2.inOut",
+                        onUpdate: () => controls.update()
+                    });
                 });
             });
 
@@ -1427,8 +883,6 @@
                 camera.updateProjectionMatrix();
                 renderer.setSize(container.clientWidth, container.clientHeight);
             });
-
-            console.log('🏛️ 3D查看器就绪');
         };
     </script>
 </body>
